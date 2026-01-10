@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Upload, Send, CheckCircle, Loader, Zap } from "lucide-react";
 
 export default function TestModal({ isOpen, onClose, endpointId }) {
@@ -14,8 +14,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const [requestId, setRequestId] = useState("");
   const apiUrl = "http://51.77.150.113:8000"; // Base URL para los endpoints
 
-  if (!isOpen) return null;
-
+  // Guardar API Key
   const handleSaveApiKey = () => {
     if (!apiKey) {
       setError("Introduce una API Key válida.");
@@ -25,12 +24,12 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
     setError("");
   };
 
+  // Enviar archivo
   const handleSend = async () => {
     if (!file) {
       setError("Selecciona un archivo primero.");
       return;
     }
-
     if (!apiKeySaved) {
       setError("Guarda tu API Key antes de enviar.");
       return;
@@ -40,25 +39,23 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
     setError("");
     setSuccess("");
     setWebhookResponse("");
+    setRequestId("");
 
     try {
-      // Crear FormData
       const formData = new FormData();
       formData.append("file", file);
 
-      // Enviar POST con Authorization
       const res = await fetch(`${apiUrl}/${endpointId}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`, // Header obligatorio
+          Authorization: `Bearer ${apiKey}`,
         },
-        body: formData, // FormData asegura multipart/form-data
+        body: formData,
       });
 
       if (res.status === 401) {
         throw new Error("Unauthorized: revisa tu API Key");
       }
-
       if (res.status !== 202) {
         const text = await res.text();
         throw new Error(`Error al enviar el archivo: ${text}`);
@@ -68,30 +65,49 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
       setSuccess(data.message || "Archivo enviado correctamente.");
       setRequestId(data.request_id || "");
       setFile(null);
-
-      // Simulación de webhook
-      setWebhookResponse("Esperando respuesta del webhook...");
-      setTimeout(() => {
-        setWebhookResponse(
-          JSON.stringify(
-            {
-              request_id: data.request_id,
-              status: "ok",
-              info: "Procesamiento completado (simulado)",
-            },
-            null,
-            2
-          )
-        );
-      }, 2000);
+      setWebhookResponse("Esperando respuesta en la base de datos...");
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      setError(err.message || "Error desconocido");
       setWebhookResponse("");
     } finally {
       setLoading(false);
     }
   };
+
+  // Polling a la DB llamando a /api/get/test-endpoint
+  useEffect(() => {
+    if (!requestId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/get/test-endpoint`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ request_id: requestId }),
+        });
+
+        const data = await res.json();
+
+        if (!data.pending) {
+          setWebhookResponse(JSON.stringify(data, null, 2));
+          clearInterval(interval);
+        } else {
+          setWebhookResponse("Procesando... esperando resultado en DB");
+        }
+      } catch (err) {
+        console.error(err);
+        setWebhookResponse("Error consultando la base de datos");
+        clearInterval(interval);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [requestId]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -167,7 +183,6 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
             {/* Botones */}
             <div className="mt-4 flex justify-center gap-2 relative">
-              {/* Icono central de webhook */}
               {!loading && !success && (
                 <Zap
                   size={32}
@@ -200,7 +215,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
               Respuesta del webhook:
             </p>
             <pre className="text-xs text-white font-mono break-words">
-              {webhookResponse || (loading ? "Esperando respuesta del webhook..." : "Esperando envío...")}
+              {webhookResponse || (loading ? "Esperando respuesta..." : "Esperando envío...")}
             </pre>
           </div>
         </div>
