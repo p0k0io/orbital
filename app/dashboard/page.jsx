@@ -50,9 +50,9 @@ export default function Home() {
   }, [isLoaded, user]);
 
   return (
-    <div className="w-full h-auto p-5 flex flex-col">
-      {/* Contenedor principal de lista + detalles */}
-      <div className="flex flex-row gap-3 flex-1 overflow-hidden pl-28">
+    <div className="w-full h-autoflex flex-col">
+      
+      <div className="px-1/3 flex flex-row gap-3 flex-1 overflow-hidden pl-28">
         {/* LISTA */}
         <motion.div
           className="w-[380px] flex-shrink-0 h-full overflow-y-auto"

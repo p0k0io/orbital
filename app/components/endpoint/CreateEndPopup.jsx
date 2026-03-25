@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Brain, Sparkles, X } from "lucide-react";
 import IaAssistant from "./IaAssistant";
+import ConfirmActionModal from "../ConfirmActionModal";
 
 export default function CreateApiKeyPopup({ open, onClose }) {
   const { user } = useUser();
@@ -16,6 +17,7 @@ export default function CreateApiKeyPopup({ open, onClose }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [iaOpen, setIaOpen] = useState(false);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
   if (!open) return null;
 
   const resetState = () => {

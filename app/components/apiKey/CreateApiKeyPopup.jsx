@@ -3,15 +3,21 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Copy, Check, Key } from "lucide-react";
+import ToastNotification from "../ToastNotification";
 
-export default function CreateApiKeyPopup({ open, onClose }) {
+import { useRouter } from "next/navigation";
+
+export default function CreateApiKeyPopup({ open, onClose, onCreated }) {
   const { user } = useUser();
+  const router = useRouter();
 
   const [keyName, setKeyName] = useState("");
   const [apiKey, setApiKey] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
+
+  const [toast, setToast] = useState(null);
 
   if (!open) return null;
 
@@ -33,11 +39,19 @@ export default function CreateApiKeyPopup({ open, onClose }) {
       });
 
       if (!res.ok) {
-        throw new Error("Error creando API Key");
+        setToast({
+          type: "error",
+          text: "Operación fallida",
+        });
       }
 
       const data = await res.json();
       setApiKey(data.apiKey);
+      setToast({
+      type: "success",
+      text: "Operación realizada correctamente",
+    });
+  
     } catch (err) {
       console.error(err);
       setError("No se pudo generar la API Key");
@@ -89,7 +103,9 @@ export default function CreateApiKeyPopup({ open, onClose }) {
     setApiKey(null);
     setCopied(false);
     setError(null);
-    onClose();
+      router.refresh();
+      onCreated?.(); 
+    onClose();   
   };
 
   return (
@@ -175,6 +191,13 @@ export default function CreateApiKeyPopup({ open, onClose }) {
           )}
         </footer>
       </div>
+       {toast && (
+        <ToastNotification
+          type={toast.type}
+          text={toast.text}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

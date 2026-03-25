@@ -17,11 +17,17 @@ import { useState, useEffect } from "react";
 import WebhookStats from "./WebhookStats";
 import TestModal from "./TestModal";
 
-export default function EndpointDetails({ selectedCard, handleClose }) {
+import ConfirmActionModal from "../ConfirmActionModal";
+
+
+export default function EndpointDetails({ selectedCard, handleClose, refresh }) {
    const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isTestModalOpen, setIsTestModalOpen] = useState(false);
 
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [jsonValue, setJsonValue] = useState("");
@@ -119,15 +125,30 @@ export default function EndpointDetails({ selectedCard, handleClose }) {
     }
   };
 
-  const deleteEndpoint = async () => {
+  const handleDeleteConfirm = async () => {
+    if (!selectedCard) return;
+
+    setDeleting(true);
+
     try {
-      await fetch("/api/delete/endpoint", {
+      const res = await fetch("/api/delete/endpoint", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedCard.id }),
+        body: JSON.stringify({
+          id: selectedCard.id,
+        }),
       });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      setConfirmOpen(false);
+
+      if (refresh) await refresh(); // refresca lista en el padre
+      handleClose();               // cierra detalles
     } catch (err) {
-      console.error("Error eliminando:", err);
+      console.error("Delete error:", err);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -156,27 +177,27 @@ export default function EndpointDetails({ selectedCard, handleClose }) {
 
         {/* Top right actions with tooltip */}
        <div className="flex shrink-0 items-center gap-2">
-  <ActionButton
-    icon={FlaskConical}
-    label="Probar"
-    onClick={testEndpoint}
-  />
+          <ActionButton
+            icon={FlaskConical}
+            label="Probar"
+            onClick={testEndpoint}
+          />
 
-  {!isEditing && (
-    <ActionButton
-      icon={Pencil}
-      label="Edit info"
-      onClick={startEditing}
-    />
-  )}
+          {!isEditing && (
+            <ActionButton
+              icon={Pencil}
+              label="Edit info"
+              onClick={startEditing}
+            />
+          )}
 
-  <ActionButton
-    icon={Trash}
-    label="Eliminar"
-    danger
-    onClick={deleteEndpoint}
-  />
-</div>
+          <ActionButton
+            icon={Trash}
+            label="Eliminar"
+            danger
+            onClick={() => setConfirmOpen(true)}
+          />
+        </div>
 
       </header>
 
@@ -300,7 +321,15 @@ export default function EndpointDetails({ selectedCard, handleClose }) {
           </div>
         )}
       </footer>
+      <ConfirmActionModal
+        open={confirmOpen}
+        message="¿Seguro que quieres eliminar este endpoint? Esta acción no se puede deshacer."
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setConfirmOpen(false)}
+        loading={deleting}
+      />
     </div>
+    
   );
 }
 

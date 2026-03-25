@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Upload, Send, CheckCircle, Loader, Zap } from "lucide-react";
+import { h1 } from "framer-motion/client";
 
 export default function TestModal({ isOpen, onClose, endpointId }) {
   const [file, setFile] = useState(null);
@@ -12,7 +13,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const [apiKey, setApiKey] = useState("");
   const [apiKeySaved, setApiKeySaved] = useState(false);
   const [requestId, setRequestId] = useState("");
-  const apiUrl = "http://51.77.150.113:8000"; // Base URL para los endpoints
+  const apiUrl = "http://localhost:8000"; // Base URL para los endpoints
 
   // Guardar API Key
   const handleSaveApiKey = () => {
@@ -183,12 +184,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
             {/* Botones */}
             <div className="mt-4 flex justify-center gap-2 relative">
-              {!loading && !success && (
-                <Zap
-                  size={32}
-                  className="absolute -top-10 left-1/2 -translate-x-1/2 text-yellow-400 animate-bounce"
-                />
-              )}
+              
 
               <button
                 onClick={onClose}
