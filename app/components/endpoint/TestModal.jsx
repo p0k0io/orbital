@@ -111,26 +111,47 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const metaPreview = buildMetadata();
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="relative w-[880px] max-w-[95vw] max-h-[90vh] rounded-2xl bg-slate-900 border border-blue-800/40 shadow-2xl flex flex-col overflow-hidden">
-
-        {/* Top accent line */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div
+        className="relative w-[880px] max-w-[95vw] max-h-[90vh] flex flex-col overflow-hidden"
+        style={{
+          background: "#141414",
+          border: "0.5px solid #2a2a2a",
+          borderRadius: "14px",
+        }}
+      >
+        {/* Top accent */}
+        <div style={{ height: "2px", background: "#378ADD" }} />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-blue-800/30">
-          <div className="flex items-center gap-3">
-            <div className={`w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)] ${loading ? "animate-pulse" : ""}`} />
-            <span className="text-sm font-semibold text-blue-100 tracking-wide">Test Endpoint</span>
-            <span className="font-mono text-[10px] text-blue-500 bg-blue-900/60 px-2 py-0.5 rounded-full border border-blue-800/40">
+        <div
+          className="flex items-center justify-between px-5 py-3"
+          style={{ borderBottom: "0.5px solid #232323" }}
+        >
+          <div className="flex items-center gap-2.5">
+            <div
+              className={loading ? "animate-pulse" : ""}
+              style={{ width: 7, height: 7, borderRadius: "50%", background: "#378ADD", flexShrink: 0 }}
+            />
+            <span style={{ fontSize: 13, fontWeight: 500, color: "#e0e0e0" }}>Test endpoint</span>
+            <span
+              style={{
+                fontFamily: "monospace", fontSize: 10, color: "#555",
+                background: "#1e1e1e", border: "0.5px solid #2e2e2e",
+                padding: "2px 8px", borderRadius: 20,
+              }}
+            >
               v1
             </span>
           </div>
           <button
             onClick={onClose}
-            className="text-blue-600 hover:text-blue-200 hover:bg-blue-800/50 p-1.5 rounded-lg transition-all"
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              color: "#555", padding: "4px 6px", borderRadius: 6, fontSize: 15, lineHeight: 1,
+            }}
           >
-            <X size={15} />
+            <X size={14} />
           </button>
         </div>
 
@@ -138,39 +159,38 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
         <div className="flex flex-1 min-h-0 overflow-hidden">
 
           {/* LEFT */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-5 border-r border-blue-800/30">
-
+          <div
+            className="flex-1 overflow-y-auto p-5 flex flex-col gap-5"
+            style={{ borderRight: "0.5px solid #232323" }}
+          >
             {/* Endpoint */}
             <div>
-              <p className="text-[10px] font-medium tracking-widest uppercase text-blue-500 mb-2">Endpoint</p>
-              <div className="flex items-center gap-2 bg-blue-900/40 border border-blue-800/40 rounded-lg px-3 py-2.5">
-                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-blue-400" />
-                <span className="font-mono text-[11px] text-blue-400 break-all">
-                  {apiUrl}/<span className="text-blue-200">{endpointId}</span>
+              <p style={labelStyle}>Endpoint</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#1a1a1a", border: "0.5px solid #2a2a2a", borderRadius: 8, padding: "8px 12px" }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#378ADD", flexShrink: 0 }} />
+                <span style={{ fontFamily: "monospace", fontSize: 11, color: "#555" }}>
+                  {apiUrl}/<span style={{ color: "#aaa" }}>{endpointId}</span>
                 </span>
               </div>
             </div>
 
             {/* API Key */}
             <div>
-              <p className="text-[10px] font-medium tracking-widest uppercase text-blue-500 mb-2">API Key</p>
+              <p style={labelStyle}>API Key</p>
               <div className="flex gap-2">
                 <input
                   type="password"
                   placeholder="sk-••••••••••••••••"
                   value={apiKey}
                   onChange={(e) => { setApiKey(e.target.value); setApiKeySaved(false); }}
-                  className="flex-1 bg-blue-900/40 border border-blue-800/40 rounded-lg px-3 py-2 text-xs text-blue-100 placeholder-blue-800 font-mono outline-none focus:border-blue-500 focus:bg-blue-900/70 transition-all"
+                  style={inputStyle}
                 />
-                <button
-                  onClick={handleSaveApiKey}
-                  className="flex items-center gap-1.5 bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition-all flex-shrink-0"
-                >
-                  {apiKeySaved ? <><CheckCircle size={12} /> Saved</> : "Guardar"}
+                <button onClick={handleSaveApiKey} style={btnPrimaryStyle}>
+                  {apiKeySaved ? <><CheckCircle size={12} /> Guardada</> : "Guardar"}
                 </button>
               </div>
               {apiKeySaved && (
-                <p className="mt-1.5 text-[11px] text-blue-400 flex items-center gap-1">
+                <p style={{ marginTop: 5, fontSize: 11, color: "#378ADD", display: "flex", alignItems: "center", gap: 4 }}>
                   <CheckCircle size={11} /> API Key activa
                 </p>
               )}
@@ -178,69 +198,67 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
             {/* File */}
             <div>
-              <p className="text-[10px] font-medium tracking-widest uppercase text-blue-500 mb-2">Archivo</p>
+              <p style={labelStyle}>Archivo</p>
               <div
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
-                className={`cursor-pointer rounded-xl border-2 border-dashed p-5 text-center transition-all
-                  ${file
-                    ? "border-blue-400/50 bg-blue-800/20"
-                    : dragOver
-                    ? "border-blue-500 bg-blue-800/30"
-                    : "border-blue-800/50 bg-blue-900/20 hover:border-blue-700 hover:bg-blue-900/30"
-                  }`}
+                style={{
+                  border: `1.5px dashed ${file ? "#378ADD" : dragOver ? "#378ADD" : "#2a2a2a"}`,
+                  background: file || dragOver ? "#1a1a1a" : "#141414",
+                  borderRadius: 10, padding: 20, textAlign: "center", cursor: "pointer",
+                  transition: "border-color 0.15s, background 0.15s",
+                }}
               >
                 <input
                   ref={fileInputRef}
                   type="file"
-                  className="hidden"
+                  style={{ display: "none" }}
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
                 {file ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircle size={14} className="text-blue-300" />
-                    <span className="text-xs text-blue-200 font-medium">{file.name}</span>
-                    <span className="text-[11px] text-blue-500">({(file.size / 1024).toFixed(1)} KB)</span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+                    <CheckCircle size={13} style={{ color: "#378ADD" }} />
+                    <span style={{ fontSize: 12, fontWeight: 500, color: "#ccc" }}>{file.name}</span>
+                    <span style={{ fontSize: 11, color: "#444" }}>({(file.size / 1024).toFixed(1)} KB)</span>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload size={18} className="text-blue-700" />
-                    <span className="text-xs text-blue-600">Arrastra o haz clic para seleccionar</span>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <Upload size={17} style={{ color: "#333" }} />
+                    <span style={{ fontSize: 12, color: "#333" }}>Arrastra o haz clic para seleccionar</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-blue-800/30" />
+            <div style={{ height: "0.5px", background: "#1e1e1e" }} />
 
             {/* Metadata */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-medium tracking-widest uppercase text-blue-500">Metadata</p>
-                <span className="text-[10px] text-blue-700">opcional</span>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <p style={{ ...labelStyle, marginBottom: 0 }}>Metadata</p>
+                <span style={{ fontSize: 10, color: "#333" }}>opcional</span>
               </div>
 
-              {/* Column headers */}
-              <div className="grid grid-cols-[1fr_1fr_28px] gap-2 mb-1.5 px-1">
-                <span className="text-[10px] text-blue-600 tracking-wider uppercase">Key</span>
-                <span className="text-[10px] text-blue-600 tracking-wider uppercase">Value</span>
-                <span />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 28px", gap: 8, marginBottom: 5, padding: "0 2px" }}>
+                {["Key", "Value", ""].map((h, i) => (
+                  <span key={i} style={{ fontSize: 10, letterSpacing: "0.07em", textTransform: "uppercase", color: "#383838" }}>{h}</span>
+                ))}
               </div>
 
-              <div className="space-y-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {metaRows.map((row, i) => (
-                  <div key={i} className="grid grid-cols-[1fr_1fr_28px] gap-2 items-center">
+                  <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 28px", gap: 8, alignItems: "center" }}>
                     <input
-                      className="bg-blue-900/40 border border-blue-800/40 rounded-lg px-3 py-2 text-xs text-blue-100 placeholder-blue-800 font-mono outline-none focus:border-blue-500 transition-all"
+                      style={metaInputStyle}
                       placeholder="user_id"
                       value={row.key}
                       onChange={(e) => updateMetaRow(i, "key", e.target.value)}
                     />
                     <input
-                      className="bg-blue-900/40 border border-blue-800/40 rounded-lg px-3 py-2 text-xs text-blue-100 placeholder-blue-800 font-mono outline-none focus:border-blue-500 transition-all"
+                      style={metaInputStyle}
                       placeholder="valor"
                       value={row.value}
                       onChange={(e) => updateMetaRow(i, "value", e.target.value)}
@@ -248,7 +266,12 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
                     <button
                       onClick={() => removeMetaRow(i)}
                       disabled={metaRows.length === 1}
-                      className="flex items-center justify-center text-blue-800 hover:text-red-400 hover:bg-red-400/10 rounded-lg p-1.5 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                      style={{
+                        background: "none", border: "none", cursor: metaRows.length === 1 ? "not-allowed" : "pointer",
+                        color: "#383838", padding: 5, borderRadius: 6,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        opacity: metaRows.length === 1 ? 0.2 : 1,
+                      }}
                     >
                       <Trash2 size={12} />
                     </button>
@@ -258,26 +281,25 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
               <button
                 onClick={addMetaRow}
-                className="mt-2.5 flex items-center gap-1.5 text-blue-500 hover:text-blue-300 text-xs transition-all"
+                style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "#378ADD", background: "none", border: "none", cursor: "pointer", padding: "2px 0", marginTop: 8 }}
               >
                 <Plus size={13} /> Añadir campo
               </button>
 
-              {/* JSON Preview */}
               {metaPreview && (
-                <div className="mt-3">
-                  <p className="text-[10px] font-medium tracking-widest uppercase text-blue-600 mb-1.5">Preview JSON</p>
-                  <div className="bg-blue-950 border border-blue-800/30 rounded-lg px-3 py-2.5 font-mono text-[11px] leading-relaxed">
-                    <span className="text-blue-700">{"{ "}</span>
+                <div style={{ marginTop: 10 }}>
+                  <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.07em", color: "#383838", marginBottom: 5 }}>Preview JSON</p>
+                  <div style={{ background: "#0e0e0e", border: "0.5px solid #232323", borderRadius: 8, padding: "10px 12px", fontFamily: "monospace", fontSize: 11, lineHeight: 1.7, color: "#444" }}>
+                    <span style={{ color: "#444" }}>{"{ "}</span>
                     {Object.entries(metaPreview).map(([k, v], i, arr) => (
                       <span key={k}>
-                        <span className="text-blue-300">"{k}"</span>
-                        <span className="text-blue-600">: </span>
-                        <span className="text-blue-200">"{v}"</span>
-                        {i < arr.length - 1 && <span className="text-blue-600">, </span>}
+                        <span style={{ color: "#378ADD" }}>"{k}"</span>
+                        <span style={{ color: "#444" }}>: </span>
+                        <span style={{ color: "#aaa" }}>"{v}"</span>
+                        {i < arr.length - 1 && <span style={{ color: "#444" }}>, </span>}
                       </span>
                     ))}
-                    <span className="text-blue-700">{" }"}</span>
+                    <span style={{ color: "#444" }}>{" }"}</span>
                   </div>
                 </div>
               )}
@@ -285,34 +307,27 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
             {/* Error / Success */}
             {error && (
-              <div className="text-xs text-red-300 bg-red-950/60 border border-red-800/40 rounded-lg px-3 py-2.5">
+              <div style={{ fontSize: 12, color: "#E24B4A", background: "#1a0909", border: "0.5px solid #4a1515", borderRadius: 8, padding: "10px 12px" }}>
                 {error}
               </div>
             )}
             {success && (
-              <div className="text-xs text-blue-200 bg-blue-800/20 border border-blue-600/30 rounded-lg px-3 py-2.5 flex items-start gap-2">
-                <CheckCircle size={13} className="text-blue-400 flex-shrink-0 mt-0.5" />
+              <div style={{ fontSize: 12, color: "#639922", background: "#111a09", border: "0.5px solid #27500A", borderRadius: 8, padding: "10px 12px", display: "flex", alignItems: "flex-start", gap: 7 }}>
+                <CheckCircle size={13} style={{ color: "#639922", flexShrink: 0, marginTop: 1 }} />
                 <div>
                   <span>{success}</span>
-                  {requestId && (
-                    <p className="font-mono text-blue-500 text-[10px] mt-0.5">{requestId}</p>
-                  )}
+                  {requestId && <p style={{ fontFamily: "monospace", fontSize: 10, color: "#3B6D11", marginTop: 3 }}>{requestId}</p>}
                 </div>
               </div>
             )}
 
             {/* Actions */}
-            <div className="flex gap-2 justify-end pt-1">
-              <button
-                onClick={onClose}
-                className="text-blue-400 hover:text-blue-200 bg-blue-900/40 hover:bg-blue-800/50 border border-blue-800/40 text-xs font-medium px-4 py-2 rounded-lg transition-all"
-              >
-                Cerrar
-              </button>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", paddingTop: 4 }}>
+              <button onClick={onClose} style={btnCancelStyle}>Cerrar</button>
               <button
                 onClick={handleSend}
                 disabled={loading || !apiKeySaved}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold px-5 py-2 rounded-lg transition-all"
+                style={{ ...btnPrimaryStyle, opacity: loading || !apiKeySaved ? 0.35 : 1, cursor: loading || !apiKeySaved ? "not-allowed" : "pointer" }}
               >
                 {loading
                   ? <><Loader size={13} className="animate-spin" /> Enviando...</>
@@ -320,22 +335,21 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
                 }
               </button>
             </div>
-
           </div>
 
           {/* RIGHT — Webhook response */}
-          <div className="w-72 flex-shrink-0 flex flex-col p-5 gap-3 bg-blue-950/50">
-            <div className="flex items-center justify-between">
-              <p className="text-[10px] font-medium tracking-widest uppercase text-blue-500">Webhook response</p>
+          <div style={{ width: 255, flexShrink: 0, padding: 18, background: "#0e0e0e", display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <p style={labelStyle}>Webhook response</p>
               {loading && (
-                <span className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-800/30 border border-blue-700/30 px-2 py-0.5 rounded-full font-mono">
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "#555", background: "#141414", border: "0.5px solid #2a2a2a", padding: "2px 8px", borderRadius: 20, fontFamily: "monospace" }}>
                   <Loader size={9} className="animate-spin" /> procesando
                 </span>
               )}
             </div>
-            <div className="flex-1 bg-blue-950 border border-blue-800/30 rounded-xl p-3.5 overflow-auto font-mono text-[11px] text-blue-400 leading-relaxed whitespace-pre-wrap break-all min-h-[200px]">
+            <div style={{ flex: 1, minHeight: 180, background: "#141414", border: "0.5px solid #232323", borderRadius: 8, padding: 12, fontFamily: "monospace", fontSize: 11, lineHeight: 1.7, color: "#555", whiteSpace: "pre-wrap", wordBreak: "break-all", overflow: "auto" }}>
               {webhookResponse || (
-                <span className="text-blue-800">
+                <span style={{ color: "#2a2a2a" }}>
                   {loading ? "Esperando respuesta..." : "Esperando envío..."}
                 </span>
               )}
@@ -344,10 +358,39 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
         </div>
 
-        {/* Bottom accent line */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-blue-800/60 to-transparent" />
-
+        {/* Bottom accent */}
+        <div style={{ height: "0.5px", background: "#1e1e1e" }} />
       </div>
     </div>
   );
 }
+
+const labelStyle = {
+  fontSize: 10, fontWeight: 500, letterSpacing: "0.09em",
+  textTransform: "uppercase", color: "#444", marginBottom: 6,
+};
+
+const inputStyle = {
+  flex: 1, background: "#1a1a1a", border: "0.5px solid #2e2e2e",
+  borderRadius: 8, padding: "8px 12px", fontSize: 12,
+  fontFamily: "monospace", color: "#d0d0d0", outline: "none",
+};
+
+const metaInputStyle = {
+  background: "#1a1a1a", border: "0.5px solid #2e2e2e",
+  borderRadius: 8, padding: "7px 10px", fontSize: 12,
+  fontFamily: "monospace", color: "#ccc", outline: "none",
+};
+
+const btnPrimaryStyle = {
+  display: "flex", alignItems: "center", gap: 6,
+  background: "#378ADD", color: "#fff", border: "none", cursor: "pointer",
+  fontSize: 12, fontWeight: 500, padding: "8px 14px", borderRadius: 8,
+  flexShrink: 0,
+};
+
+const btnCancelStyle = {
+  fontSize: 12, fontWeight: 500, padding: "8px 14px",
+  borderRadius: 8, cursor: "pointer",
+  background: "none", border: "0.5px solid #2e2e2e", color: "#555",
+};
