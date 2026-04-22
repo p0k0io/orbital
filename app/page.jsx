@@ -405,7 +405,7 @@ export default function Home() {
       {/* ══════════════════════════════
           FEATURES
       ══════════════════════════════ */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="relative py-32 overflow-hidden" id="features">
         {/* Left glow */}
         <div className="absolute left-0 top-1/3 w-96 h-96 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(29,78,216,.1), transparent 70%)", filter: "blur(40px)" }} />

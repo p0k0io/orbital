@@ -16,6 +16,7 @@ const PUBLIC_NAV = [
   { href: "/#features", label: "Features" },
   { href: "/pricing",   label: "Pricing"  },
   { href: "/docs",      label: "Docs"     },
+  { href: "/implementations", label:"Implementations" },
 ];
 
 const DASHBOARD_NAV = [
