@@ -344,7 +344,7 @@ export default function ImplementationsPage() {
       <div style={{ position: "relative", zIndex: 10, maxWidth: 1060, margin: "0 auto", padding: "72px 24px 96px" }}>
 
         {/* ── HERO ── */}
-        <div style={{ textAlign: "center", marginBottom: 56 , marginTop:"80gpx"}}>
+        <div style={{ marginTop: "50px", textAlign: "center", marginBottom: 56 }}>
           <motion.span
             initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
             style={{

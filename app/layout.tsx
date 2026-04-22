@@ -19,12 +19,11 @@ const PUBLIC_NAV = [
 ];
 
 const DASHBOARD_NAV = [
-  { href: "/dashboard",            label: "Overview"   },
-  { href: "/dashboard/playground", label: "Playground" },
-  { href: "/dashboard/usage",      label: "Usage"      },
-  { href: "/dashboard/docs",       label: "Docs"       },
+  { href: "/dashboard",            label: "Dashboard"   },
+  { href: "/docs",       label: "Docs"       },
   { href: "/dashboard/apikey",     label: "API Key"    },
   { href: "/dashboard/budget",     label: "Budget"     },
+  { href: "/implementations", label:"Implementations" },
 ];
 
 // ─── Navbar ──────────────────────────────────────────────────────────────────
