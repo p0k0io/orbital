@@ -507,7 +507,7 @@ function CostCalculator() {
         </div>
 
         <p style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "rgba(255,255,255,.18)" }}>
-          * Estimates are indicative. Included credits reset monthly. Excess billed at each plan's discounted rate (base €0.00675 / 1K credits).
+          * Estimates are indicative. Included credits reset monthly. Excess billed at each plan&apos;s discounted rate (base €0.00675 / 1K credits).
         </p>
       </motion.div>
     </section>
@@ -675,10 +675,13 @@ export default function PricingPage() {
               Real cost by volume
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: .1 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
               style={{ fontSize: 16, color: "rgba(255,255,255,.38)", fontWeight: 300, margin: 0 }}
             >
-              Estimated total including base plan + excess billed at each plan's discounted rate.
+              Estimated total including base plan + excess billed at each plan&apos;s discounted rate.
             </motion.p>
           </div>
 
@@ -696,23 +699,47 @@ export default function PricingPage() {
                 </div>
               ))}
             </div>
-            {VOLUME_ROWS.map(row => (
-              <div key={row.vol} style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-                <div style={{ padding: "16px 20px", display: "flex", alignItems: "center" }}>
-                  <span style={{ fontWeight: 500, fontSize: 13, color: "rgba(255,255,255,.65)" }}>{row.vol}</span>
-                </div>
-                {PLANS.map(p => (
-                  <div key={p.id} style={{ padding: 16, display: "flex", alignItems: "center", justifyContent: "center", background: p.highlight ? "rgba(37,99,235,.06)" : "transparent" }}>
-                    <span style={{ fontWeight: 600, fontSize: 13, color: p.highlight ? "#93c5fd" : "rgba(255,255,255,.62)" }}>{row[p.id]}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </motion.div>
-          <p style={{ textAlign: "center", marginTop: 14, fontSize: 11, color: "rgba(255,255,255,.22)" }}>
-            * Credits included in the plan are not billed. Excess charged at each plan's discounted rate (base: €0.00675 per 1K credits).
-          </p>
-        </section>
+{VOLUME_ROWS.map(row => (
+  <div
+    key={row.vol}
+    style={{
+      display: "grid",
+      gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr",
+      borderBottom: "1px solid rgba(255,255,255,.06)"
+    }}
+  >
+    <div style={{ padding: "16px 20px", display: "flex", alignItems: "center" }}>
+      <span style={{ fontWeight: 500, fontSize: 13, color: "rgba(255,255,255,.65)" }}>
+        {row.vol}
+      </span>
+    </div>
+
+    {PLANS.map(p => (
+      <div
+        key={p.id}
+        style={{
+          padding: 16,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: p.highlight ? "rgba(37,99,235,.06)" : "transparent"
+        }}
+      >
+        <span style={{ fontWeight: 600, fontSize: 13, color: p.highlight ? "#93c5fd" : "rgba(255,255,255,.62)" }}>
+          {row[p.id]}
+        </span>
+      </div>
+    ))}
+  </div>
+))}
+
+</motion.div>
+
+<p style={{ textAlign: "center", marginTop: 14, fontSize: 11, color: "rgba(255,255,255,.22)" }}>
+  * Credits included in the plan are not billed. Excess charged at each plan&apos;s discounted rate (base: €0.00675 per 1K credits).
+</p>
+
+</section>
 
         {/* ── FAQ ── */}
         <section style={{ position: "relative", padding: "40px 16px 80px", maxWidth: 720, margin: "0 auto" }}>

@@ -29,7 +29,7 @@ export default function StatsPanel() {
               </summary>
 
               <div className="mt-2 text-sm text-white/70">
-                <p>Contenido de ejemplo para "{titulo}".</p>
+                <p>{`Contenido de ejemplo para "${titulo}".`}</p>
               </div>
             </details>
           ))}

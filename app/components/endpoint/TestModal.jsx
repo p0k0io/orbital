@@ -288,17 +288,34 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
               {metaPreview && (
                 <div style={{ marginTop: 10 }}>
-                  <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.07em", color: "#383838", marginBottom: 5 }}>Preview JSON</p>
-                  <div style={{ background: "#0e0e0e", border: "0.5px solid #232323", borderRadius: 8, padding: "10px 12px", fontFamily: "monospace", fontSize: 11, lineHeight: 1.7, color: "#444" }}>
+                  <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.07em", color: "#383838", marginBottom: 5 }}>
+                    Preview JSON
+                  </p>
+
+                  <div
+                    style={{
+                      background: "#0e0e0e",
+                      border: "0.5px solid #232323",
+                      borderRadius: 8,
+                      padding: "10px 12px",
+                      fontFamily: "monospace",
+                      fontSize: 11,
+                      lineHeight: 1.7,
+                      color: "#444"
+                    }}
+                  >
                     <span style={{ color: "#444" }}>{"{ "}</span>
+
                     {Object.entries(metaPreview).map(([k, v], i, arr) => (
                       <span key={k}>
-                        <span style={{ color: "#378ADD" }}>"{k}"</span>
+                        <span style={{ color: "#378ADD" }}>{`"${k}"`}</span>
                         <span style={{ color: "#444" }}>: </span>
-                        <span style={{ color: "#aaa" }}>"{v}"</span>
+                        <span style={{ color: "#aaa" }}>{`"${v}"`}</span>
+
                         {i < arr.length - 1 && <span style={{ color: "#444" }}>, </span>}
                       </span>
                     ))}
+
                     <span style={{ color: "#444" }}>{" }"}</span>
                   </div>
                 </div>

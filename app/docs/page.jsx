@@ -781,210 +781,218 @@ export default function DocsPage() {
         {/* ── MAIN ── */}
         <main style={{ flex: 1, padding: "48px 52px 80px", maxWidth: 800, margin: "100px auto" }}>
 
-          {/* OVERVIEW */}
-          <section id="overview" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>INTRODUCTION</SectionLabel>
-            <motion.h1
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              style={{ fontSize: "clamp(30px,4vw,48px)", fontWeight: 900, letterSpacing: "-0.03em", margin: "0 0 14px", lineHeight: 1.1, color: "rgba(226,232,240,.95)" }}
-            >
-              Orbital{" "}
-              <span style={{ display: "inline-block", background: "linear-gradient(130deg,rgba(148,163,184,.9),rgba(203,213,225,.95) 50%,rgba(226,232,240,.8))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                API Docs
-              </span>
-            </motion.h1>
-            <p style={{ fontSize: 16, color: "rgba(148,163,184,.65)", lineHeight: 1.8, margin: "0 0 18px", fontWeight: 300 }}>
-              Orbital normalizes documents — CVs, invoices, contracts — into clean, structured JSON. Send a file, receive a webhook. That's the entire mental model.
-            </p>
-            <InfoBox type="info">
-              <strong style={{ color: "rgba(203,213,225,.9)" }}>Key rule:</strong> A{" "}
-              <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>202 Accepted</code>{" "}
-              response never means "success" — it means processing has started. The final result always arrives via your configured webhook.
-            </InfoBox>
+{/* OVERVIEW */}
+<section id="overview" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
+  <SectionLabel>INTRODUCTION</SectionLabel>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 20 }}>
-              {[
-                { Icon: Zap,         title: "Async by default",  desc: "Fire-and-forget architecture. Your users aren't waiting." },
-                { Icon: Code2,       title: "Schema-first",      desc: "You define the output JSON structure. Orbital fills it in." },
-                { Icon: ShieldCheck, title: "Resilient delivery", desc: "Built-in retries ensure webhook failures don't lose data." },
-              ].map((c, i) => (
-                <div key={i} style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)" }}>
-                  <c.Icon style={{ width: 16, height: 16, color: "rgba(148,163,184,.5)", marginBottom: 8 }} />
-                  <p style={{ fontSize: 13, fontWeight: 700, color: "rgba(203,213,225,.8)", margin: "0 0 4px" }}>{c.title}</p>
-                  <p style={{ fontSize: 12, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.55 }}>{c.desc}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+  <motion.h1
+    initial={{ opacity: 0, y: 14 }}
+    animate={{ opacity: 1, y: 0 }}
+    style={{
+      fontSize: "clamp(30px,4vw,48px)",
+      fontWeight: 900,
+      letterSpacing: "-0.03em",
+      margin: "0 0 14px",
+      lineHeight: 1.1,
+      color: "rgba(226,232,240,.95)",
+    }}
+  >
+    Orbital{" "}
+    <span
+      style={{
+        display: "inline-block",
+        background:
+          "linear-gradient(130deg,rgba(148,163,184,.9),rgba(203,213,225,.95) 50%,rgba(226,232,240,.8))",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+      }}
+    >
+      API Docs
+    </span>
+  </motion.h1>
 
-          {/* QUICKSTART */}
-          <section id="quickstart" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>QUICK START</SectionLabel>
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 16px", color: "rgba(226,232,240,.9)" }}>Up and running in 3 steps</h2>
+  <p
+    style={{
+      fontSize: 16,
+      color: "rgba(148,163,184,.65)",
+      lineHeight: 1.8,
+      margin: "0 0 18px",
+      fontWeight: 300,
+    }}
+  >
+    Orbital normalizes documents — CVs, invoices, contracts — into clean, structured JSON. Send a file, receive a webhook. That&apos;s the entire mental model.
+  </p>
 
-            {[
-              { n: "01", title: "Create an API Key",        desc: "Dashboard → API Keys → Generate new key. Store it securely — it's shown only once." },
-              { n: "02", title: "Create an Endpoint",       desc: "Dashboard → Endpoints → New endpoint. Define your output JSON schema and set your webhook URL." },
-              { n: "03", title: "Send your first document", desc: "POST a file to your endpoint URL. Receive 202 immediately, then structured JSON arrives at the webhook." },
-            ].map((step, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                style={{
-                  display: "flex", gap: 18, padding: "18px 22px", marginBottom: 10,
-                  borderRadius: 12, background: "rgba(255,255,255,.025)",
-                  border: "1px solid rgba(71,85,105,.28)",
-                }}
-              >
-                <span style={{ fontSize: 11, fontWeight: 900, color: "rgba(100,116,139,.6)", fontFamily: "monospace", minWidth: 22, paddingTop: 2, letterSpacing: "0.08em" }}>{step.n}</span>
-                <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "rgba(203,213,225,.85)", margin: "0 0 4px" }}>{step.title}</p>
-                  <p style={{ fontSize: 13, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.6 }}>{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+  <InfoBox type="info">
+    <strong style={{ color: "rgba(203,213,225,.9)" }}>Key rule:</strong> A{" "}
+    <code
+      style={{
+        background: "rgba(255,255,255,.06)",
+        padding: "1px 5px",
+        borderRadius: 4,
+        fontSize: 12,
+      }}
+    >
+      202 Accepted
+    </code>{" "}
+    response never means &quot;success&quot; — it means processing has started. The final result always arrives via your configured webhook.
+  </InfoBox>
 
-            <InfoBox type="warn">
-              Your webhook URL must be <strong>publicly accessible</strong>, support HTTPS, and respond within <strong>3 seconds</strong> to avoid triggering retries.
-            </InfoBox>
-          </section>
-
-          {/* AUTH */}
-          <section id="auth" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>AUTHENTICATION</SectionLabel>
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 12px", color: "rgba(226,232,240,.9)" }}>Bearer token auth</h2>
-            <p style={{ fontSize: 14, color: "rgba(148,163,184,.6)", lineHeight: 1.7, margin: "0 0 14px" }}>
-              Every request must include your API Key in the <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>Authorization</code> header. Keys are per-workspace and can be rotated at any time without downtime.
-            </p>
-            <CodeBlock lang="HTTP HEADER" code={`Authorization: Bearer YOUR_API_KEY`} />
-            <CodeBlock lang="cURL" code={`curl -X POST https://api.orbital.io/cv/{endpoint_id} \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: multipart/form-data" \\
-  -F "file=@document.pdf;type=application/pdf"`} />
-            <InfoBox type="warn">
-              Never expose your API Key in frontend code or public repositories. Store it in environment variables or a secrets manager.
-            </InfoBox>
-          </section>
-
-          {/* FLOW */}
-          <section id="flow" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>ARCHITECTURE</SectionLabel>
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 12px", color: "rgba(226,232,240,.9)" }}>Async processing flow</h2>
-
-            {/* Flow diagram */}
-            <div style={{
-              display: "flex", alignItems: "center", flexWrap: "nowrap",
-              margin: "20px 0", padding: "18px 20px", borderRadius: 14,
-              background: "rgba(255,255,255,.02)", border: "1px solid rgba(71,85,105,.28)",
-              overflowX: "auto", gap: 0,
-            }}>
-              {[
-                { Icon: Globe,    label: "Your App",    sublabel: "POST /cv/{id}"   },
-                null,
-                { Icon: Activity, label: "Orbital API", sublabel: "202 Accepted"   },
-                null,
-                { Icon: Zap,      label: "Worker Queue",sublabel: "Processing…"     },
-                null,
-                { Icon: Terminal, label: "Your Webhook",sublabel: "JSON payload"    },
-              ].map((node, i) =>
-                node === null ? (
-                  <ArrowRight key={i} style={{ width: 14, height: 14, color: "rgba(71,85,105,.5)", flexShrink: 0, margin: "0 6px" }} />
-                ) : (
-                  <div key={i} style={{ textAlign: "center", padding: "0 10px", flexShrink: 0 }}>
-                    <div style={{
-                      width: 38, height: 38, borderRadius: 10, margin: "0 auto 7px",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      background: "rgba(255,255,255,.04)", border: "1px solid rgba(71,85,105,.35)",
-                    }}>
-                      <node.Icon style={{ width: 15, height: 15, color: "rgba(148,163,184,.6)" }} />
-                    </div>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "rgba(203,213,225,.7)", margin: "0 0 2px" }}>{node.label}</p>
-                    <p style={{ fontSize: 10, color: "rgba(100,116,139,.55)", margin: 0 }}>{node.sublabel}</p>
-                  </div>
-                )
-              )}
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <div style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(148,163,184,.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 7px" }}>Phase 1 — Submission</p>
-                <p style={{ fontSize: 13, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.65 }}>POST your file. Receive <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 4px", borderRadius: 3, fontSize: 11 }}>202</code> + <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 4px", borderRadius: 3, fontSize: 11 }}>request_id</code> in milliseconds.</p>
-              </div>
-              <div style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(148,163,184,.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 7px" }}>Phase 2 — Delivery</p>
-                <p style={{ fontSize: 13, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.65 }}>Orbital processes in the background and POSTs structured JSON (or failure details) to your webhook.</p>
-              </div>
-            </div>
-          </section>
-
-          {/* OUTPUT */}
-          <section id="output" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>OUTPUT FORMAT</SectionLabel>
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 12px", color: "rgba(226,232,240,.9)" }}>Webhook payload structure</h2>
-            <p style={{ fontSize: 14, color: "rgba(148,163,184,.6)", lineHeight: 1.7, margin: "0 0 14px" }}>
-              The initial 202 response returns a minimal acknowledgement. The full result lands at your webhook once processing completes.
-            </p>
-
-            <p style={{ fontSize: 11, color: "rgba(100,116,139,.6)", margin: "0 0 6px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Initial response (202)</p>
-            <CodeBlock lang="JSON" code={`{
-  "message": "File received and queued for processing.",
-  "request_id": "req_8f3a2c1d-..."
-}`} />
-
-            <p style={{ fontSize: 11, color: "rgba(100,116,139,.6)", margin: "14px 0 6px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Webhook — success</p>
-            <CodeBlock lang="JSON" code={`{
-  "status": "completed",
-  "request_id": "req_8f3a2c1d-...",
-  "data": {
-    "contact_info": {
-      "name": "Jane Doe",
-      "email": "jane.doe@example.com"
-    },
-    "experience": [
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: 12,
+      marginTop: 20,
+    }}
+  >
+    {[
       {
-        "position": "Senior Backend Engineer",
-        "company": "Acme Corp",
-        "start": "2020-03",
-        "end": "present"
-      }
-    ]
-  }
-}`} />
+        Icon: Zap,
+        title: "Async by default",
+        desc: "Fire-and-forget architecture. Your users aren&apos;t waiting.",
+      },
+      {
+        Icon: Code2,
+        title: "Schema-first",
+        desc: "You define the output JSON structure. Orbital fills it in.",
+      },
+      {
+        Icon: ShieldCheck,
+        title: "Resilient delivery",
+        desc: "Built-in retries ensure webhook failures don&apos;t lose data.",
+      },
+    ].map((c, i) => (
+      <div
+        key={i}
+        style={{
+          padding: "16px 18px",
+          borderRadius: 12,
+          background: "rgba(255,255,255,.025)",
+          border: "1px solid rgba(71,85,105,.28)",
+        }}
+      >
+        <c.Icon
+          style={{
+            width: 16,
+            height: 16,
+            color: "rgba(148,163,184,.5)",
+            marginBottom: 8,
+          }}
+        />
+        <p
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color: "rgba(203,213,225,.8)",
+            margin: "0 0 4px",
+          }}
+        >
+          {c.title}
+        </p>
+        <p
+          style={{
+            fontSize: 12,
+            color: "rgba(100,116,139,.7)",
+            margin: 0,
+            lineHeight: 1.55,
+          }}
+        >
+          {c.desc}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
 
-            <p style={{ fontSize: 11, color: "rgba(100,116,139,.6)", margin: "14px 0 6px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Webhook — failure</p>
-            <CodeBlock lang="JSON" code={`{
-  "status": "failed",
-  "request_id": "req_8f3a2c1d-...",
-  "error": "Could not extract structured data: file appears to be a scanned image with no readable text.",
-  "data": null
-}`} />
-          </section>
+{/* QUICKSTART */}
+<section id="quickstart" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
+  <SectionLabel>QUICK START</SectionLabel>
 
-          {/* ERRORS */}
-          <section id="errors" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-            <SectionLabel>ERROR REFERENCE</SectionLabel>
-            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 12px", color: "rgba(226,232,240,.9)" }}>Error handling</h2>
-            <p style={{ fontSize: 14, color: "rgba(148,163,184,.6)", lineHeight: 1.7, margin: "0 0 22px" }}>
-              Synchronous errors (Phase 1) return standard HTTP codes. Async errors (Phase 2) arrive at your webhook with <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>status: "failed"</code>.
-            </p>
+  <h2
+    style={{
+      fontSize: 26,
+      fontWeight: 800,
+      letterSpacing: "-0.02em",
+      margin: "0 0 16px",
+      color: "rgba(226,232,240,.9)",
+    }}
+  >
+    Up and running in 3 steps
+  </h2>
 
-            <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(100,116,139,.6)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 8px" }}>Phase 1 — Synchronous</p>
-            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(71,85,105,.28)", marginBottom: 24 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "84px 1fr 1.5fr", padding: "9px 14px", background: "rgba(255,255,255,.03)", borderBottom: "1px solid rgba(71,85,105,.2)" }}>
-                {["Code", "Type", "Action"].map(h => (
-                  <span key={h} style={{ fontSize: 10, fontWeight: 700, color: "rgba(100,116,139,.55)", letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</span>
-                ))}
-              </div>
-              {SYNC_ERRORS.map((row, i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "84px 1fr 1.5fr", padding: "11px 14px", borderBottom: i < SYNC_ERRORS.length - 1 ? "1px solid rgba(71,85,105,.15)" : "none", background: i % 2 === 1 ? "rgba(255,255,255,.015)" : "transparent" }}>
-                  <div style={{ paddingTop: 1 }}><StatusPill status={row.code} /></div>
-                  <span style={{ fontSize: 12, color: "rgba(148,163,184,.6)", paddingLeft: 2, paddingTop: 3 }}>{row.type}</span>
-                  <span style={{ fontSize: 12, color: "rgba(100,116,139,.6)", lineHeight: 1.55, paddingTop: 3 }}>{row.action}</span>
-                </div>
-              ))}
-            </div>
+  {[
+    {
+      n: "01",
+      title: "Create an API Key",
+      desc: "Dashboard → API Keys → Generate new key. Store it securely — it&apos;s shown only once.",
+    },
+    {
+      n: "02",
+      title: "Create an Endpoint",
+      desc: "Dashboard → Endpoints → New endpoint. Define your output JSON schema and set your webhook URL.",
+    },
+    {
+      n: "03",
+      title: "Send your first document",
+      desc: "POST a file to your endpoint URL. Receive 202 immediately, then structured JSON arrives at the webhook.",
+    },
+  ].map((step, i) => (
+    <motion.div
+      key={i}
+      initial={{ opacity: 0, x: -10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: i * 0.08 }}
+      style={{
+        display: "flex",
+        gap: 18,
+        padding: "18px 22px",
+        marginBottom: 10,
+        borderRadius: 12,
+        background: "rgba(255,255,255,.025)",
+        border: "1px solid rgba(71,85,105,.28)",
+      }}
+    >
+      <span
+        style={{
+          fontSize: 11,
+          fontWeight: 900,
+          color: "rgba(100,116,139,.6)",
+          fontFamily: "monospace",
+          minWidth: 22,
+          paddingTop: 2,
+          letterSpacing: "0.08em",
+        }}
+      >
+        {step.n}
+      </span>
+      <div>
+        <p
+          style={{
+            fontSize: 14,
+            fontWeight: 700,
+            color: "rgba(203,213,225,.85)",
+            margin: "0 0 4px",
+          }}
+        >
+          {step.title}
+        </p>
+        <p
+          style={{
+            fontSize: 13,
+            color: "rgba(100,116,139,.7)",
+            margin: 0,
+            lineHeight: 1.6,
+          }}
+        >
+          {step.desc}
+        </p>
+      </div>
+    </motion.div>
+  ))}
+
 
             <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(100,116,139,.6)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 8px" }}>Phase 2 — Async (webhook)</p>
             <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(71,85,105,.28)" }}>
