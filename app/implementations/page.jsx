@@ -277,7 +277,9 @@ function ImplementationCard({ impl, featured }) {
             >
               <p style={{ fontSize: 13, color: "rgba(148,163,184,.55)", lineHeight: 1.7, margin: "0 0 14px" }}>{impl.description}</p>
               <div style={{ marginBottom: 16, padding: "12px 14px", borderRadius: 10, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.22)" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(100,116,139,.55)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 8px" }}>What you'll build</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "rgba(100,116,139,.55)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 8px" }}>
+                  What you&apos;ll build
+                </p>
                 {impl.outcomes.map((o, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 5 }}>
                     <Check style={{ width: 12, height: 12, color: "rgba(140,180,150,.7)", flexShrink: 0, marginTop: 2 }} />
