@@ -15,7 +15,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const [metaRows, setMetaRows] = useState([{ key: "", value: "" }]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
-  const apiUrl = "http://localhost:8000";
+  const apiUrl = "http://87.106.125.227:8000";
 
   const handleSaveApiKey = () => {
     if (!apiKey) { setError("Introduce una API Key válida."); return; }

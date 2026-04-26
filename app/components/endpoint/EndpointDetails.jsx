@@ -214,7 +214,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
           <InfoItem
             icon={LinkIcon}
             label="Request URL"
-            value={`http://localhost:8000/${selectedCard.id}`}
+            value={`http://87.106.125.227:8000/${selectedCard.id}`}
             mono
           />
 

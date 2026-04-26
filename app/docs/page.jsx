@@ -8,8 +8,42 @@ import {
   CheckCircle, Clock, XCircle, Activity, ExternalLink,
   ShieldCheck, Webhook, Database, GitBranch, Workflow,
   Server, FileCode, Users, Receipt, Scale, Building2,
-  Home, TrendingUp,
+  Home, TrendingUp, Menu, X,
 } from "lucide-react";
+
+/* ─────────────────────────────────────────
+   CLIPBOARD HELPER  (fix #1)
+   Gracefully handles: HTTPS clipboard API,
+   HTTP fallback via execCommand, and SSR.
+───────────────────────────────────────── */
+async function copyToClipboard(text) {
+  // Modern API — only available on HTTPS / localhost
+  if (
+    typeof navigator !== "undefined" &&
+    navigator.clipboard &&
+    typeof navigator.clipboard.writeText === "function"
+  ) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // fall through to legacy path
+    }
+  }
+
+  // Legacy fallback — works on HTTP and older browsers
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand("copy");
+  } finally {
+    document.body.removeChild(ta);
+  }
+}
 
 /* ─────────────────────────────────────────
    STARFIELD
@@ -455,10 +489,13 @@ function InfoBox({ type = "info", children }) {
   );
 }
 
+/* ─────────────────────────────────────────
+   CODE BLOCK  (fix #1 applied here)
+───────────────────────────────────────── */
 function CodeBlock({ code, lang = "" }) {
   const [copied, setCopied] = useState(false);
-  const copy = () => {
-    navigator.clipboard.writeText(code);
+  const copy = async () => {
+    await copyToClipboard(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -513,10 +550,11 @@ function StatusPill({ status }) {
   );
 }
 
+/* CopyButton  (fix #1 applied here too) */
 function CopyButton({ code }) {
   const [copied, setCopied] = useState(false);
-  const copy = () => {
-    navigator.clipboard.writeText(code);
+  const copy = async () => {
+    await copyToClipboard(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -610,12 +648,12 @@ function SdkExamples() {
    IMPLEMENTATIONS PREVIEW CARD
 ───────────────────────────────────────── */
 const IMPL_PREVIEWS = [
-  { Icon: Users,     title: "HR Recruitment Pipeline",     desc: "Auto-parse CVs into a normalized candidate schema and seed your ATS." },
-  { Icon: Receipt,   title: "Invoice Sync",                desc: "Extract line items and totals from invoices, push to your ERP." },
-  { Icon: Scale,     title: "Legal Contract Analysis",     desc: "Extract parties, dates, and key clauses into a searchable database." },
-  { Icon: Workflow,  title: "No-Code Pipeline (n8n/Make)", desc: "Connect Orbital to 400+ apps without writing a single line of code." },
-  { Icon: TrendingUp,title: "Financial Document OCR",      desc: "Normalize bank statements and balance sheets into your BI stack." },
-  { Icon: Home,      title: "Real Estate Listing Parser",  desc: "Extract property details from PDFs and push to your CRM." },
+  { Icon: Users,      title: "HR Recruitment Pipeline",     desc: "Auto-parse CVs into a normalized candidate schema and seed your ATS." },
+  { Icon: Receipt,    title: "Invoice Sync",                desc: "Extract line items and totals from invoices, push to your ERP." },
+  { Icon: Scale,      title: "Legal Contract Analysis",     desc: "Extract parties, dates, and key clauses into a searchable database." },
+  { Icon: Workflow,   title: "No-Code Pipeline (n8n/Make)", desc: "Connect Orbital to 400+ apps without writing a single line of code." },
+  { Icon: TrendingUp, title: "Financial Document OCR",      desc: "Normalize bank statements and balance sheets into your BI stack." },
+  { Icon: Home,       title: "Real Estate Listing Parser",  desc: "Extract property details from PDFs and push to your CRM." },
 ];
 
 function ImplementationsCard() {
@@ -626,7 +664,7 @@ function ImplementationsCard() {
       background: "rgba(255,255,255,.02)",
       padding: 28,
     }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, gap: 12 }}>
         <div>
           <SectionLabel>REAL-WORLD USE CASES</SectionLabel>
           <h3 style={{ fontSize: 20, fontWeight: 800, color: "rgba(226,232,240,.9)", margin: 0, letterSpacing: "-0.02em" }}>
@@ -673,24 +711,173 @@ function ImplementationsCard() {
    ERROR TABLES
 ───────────────────────────────────────── */
 const SYNC_ERRORS = [
-  { code: "401", type: "Unauthorized",         action: "Verify API Key validity. Regenerate if compromised." },
-  { code: "403", type: "Forbidden",            action: "Check endpoint permissions for your key." },
-  { code: "404", type: "Not Found",            action: "Validate endpoint_id exists before retrying." },
-  { code: "422", type: "Unprocessable Entity", action: "Exactly one file must be attached as multipart/form-data." },
-  { code: "500", type: "Internal Server Error",action: "Show generic message. Retry manually after a delay." },
+  { code: "401", type: "Unauthorized",          action: "Verify API Key validity. Regenerate if compromised." },
+  { code: "403", type: "Forbidden",             action: "Check endpoint permissions for your key." },
+  { code: "404", type: "Not Found",             action: "Validate endpoint_id exists before retrying." },
+  { code: "422", type: "Unprocessable Entity",  action: "Exactly one file must be attached as multipart/form-data." },
+  { code: "500", type: "Internal Server Error", action: "Show generic message. Retry manually after a delay." },
 ];
 
 const ASYNC_ERRORS = [
-  { scenario: "Processing failure", detect: 'payload.status === "failed"',   action: "Display retry option. Log error with request_id." },
-  { scenario: "Webhook timeout",    detect: "No callback after X minutes",   action: "Use a cron job to mark the request as failed." },
-  { scenario: "Webhook rejected",   detect: "Your server returned 4xx/5xx",  action: "Ensure idempotency. Don't rate-limit Orbital's IPs." },
+  { scenario: "Processing failure", detect: 'payload.status === "failed"',  action: "Display retry option. Log error with request_id." },
+  { scenario: "Webhook timeout",    detect: "No callback after X minutes",  action: "Use a cron job to mark the request as failed." },
+  { scenario: "Webhook rejected",   detect: "Your server returned 4xx/5xx", action: "Ensure idempotency. Don't rate-limit Orbital's IPs." },
 ];
+
+/* ─────────────────────────────────────────
+   SIDEBAR NAV CONTENT  (shared by desktop
+   sidebar and mobile modal)
+───────────────────────────────────────── */
+function NavContent({ activeSection, onNavigate }) {
+  return (
+    <>
+      {/* Brand */}
+      <div style={{ marginBottom: 28, paddingBottom: 20, borderBottom: "1px solid rgba(71,85,105,.2)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 5 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: 7,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(255,255,255,.06)", border: "1px solid rgba(71,85,105,.4)",
+          }}>
+            <Globe style={{ width: 14, height: 14, color: "rgba(148,163,184,.7)" }} />
+          </div>
+          <span style={{ fontSize: 15, fontWeight: 800, color: "rgba(226,232,240,.9)", letterSpacing: "-0.02em" }}>Orbital</span>
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", padding: "1px 7px",
+            borderRadius: 999, color: "rgba(148,163,184,.6)",
+            background: "rgba(71,85,105,.2)", border: "1px solid rgba(71,85,105,.35)",
+          }}>DOCS</span>
+        </div>
+        <p style={{ fontSize: 11, color: "rgba(100,116,139,.7)", margin: 0, letterSpacing: "0.04em" }}>API Reference v1.0</p>
+      </div>
+
+      {/* Nav items */}
+      <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        {NAV_SECTIONS.map(s => {
+          const isActive = activeSection === s.id;
+          return (
+            <button key={s.id} onClick={() => onNavigate(s.id)} style={{
+              display: "flex", alignItems: "center", gap: 9, padding: "8px 11px",
+              borderRadius: 9, cursor: "pointer", textAlign: "left",
+              background: isActive ? "rgba(255,255,255,.05)" : "transparent",
+              border: `1px solid ${isActive ? "rgba(71,85,105,.4)" : "transparent"}`,
+              color: isActive ? "rgba(203,213,225,.85)" : "rgba(100,116,139,.7)",
+              fontSize: 13, fontWeight: isActive ? 600 : 400,
+              transition: "all 0.15s", width: "100%",
+            }}>
+              <s.icon style={{ width: 13, height: 13, flexShrink: 0 }} />
+              {s.label}
+              {isActive && <ChevronRight style={{ width: 11, height: 11, marginLeft: "auto", opacity: 0.5 }} />}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Implementations link */}
+      <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid rgba(71,85,105,.2)" }}>
+        <a href="/implementations" style={{
+          display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", borderRadius: 10,
+          background: "rgba(255,255,255,.03)", border: "1px solid rgba(71,85,105,.3)",
+          color: "rgba(148,163,184,.65)", fontSize: 12, fontWeight: 600, textDecoration: "none",
+          transition: "all 0.15s",
+        }}>
+          <Box style={{ width: 13, height: 13 }} />
+          Implementations
+          <ExternalLink style={{ width: 10, height: 10, marginLeft: "auto", opacity: 0.45 }} />
+        </a>
+      </div>
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MOBILE NAV MODAL  (fix #2)
+───────────────────────────────────────── */
+function MobileNavModal({ activeSection, onNavigate, open, onClose }) {
+  // Lock body scroll when open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            style={{
+              position: "fixed", inset: 0, zIndex: 90,
+              background: "rgba(0,0,0,.65)", backdropFilter: "blur(4px)",
+            }}
+          />
+
+          {/* Drawer — slides up from bottom */}
+          <motion.div
+            key="drawer"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
+            style={{
+              position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
+              background: "rgba(5,12,24,.97)", backdropFilter: "blur(20px)",
+              borderTop: "1px solid rgba(71,85,105,.35)",
+              borderRadius: "20px 20px 0 0",
+              padding: "20px 20px 40px",
+              maxHeight: "82vh", overflowY: "auto",
+            }}
+          >
+            {/* Drag handle */}
+            <div style={{
+              width: 36, height: 4, borderRadius: 2,
+              background: "rgba(71,85,105,.5)",
+              margin: "0 auto 20px",
+            }} />
+
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              style={{
+                position: "absolute", top: 16, right: 16,
+                width: 30, height: 30, borderRadius: 8,
+                background: "rgba(255,255,255,.05)",
+                border: "1px solid rgba(71,85,105,.3)",
+                color: "rgba(148,163,184,.6)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >
+              <X style={{ width: 14, height: 14 }} />
+            </button>
+
+            <NavContent
+              activeSection={activeSection}
+              onNavigate={(id) => { onNavigate(id); onClose(); }}
+            />
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
 
 /* ─────────────────────────────────────────
    PAGE
 ───────────────────────────────────────── */
 export default function DocsPage() {
   const [activeSection, setActiveSection] = useState("overview");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -712,289 +899,152 @@ export default function DocsPage() {
         <div style={{ position: "absolute", borderRadius: "50%", width: 380, height: 240, bottom: "20%", right: -60, background: "radial-gradient(ellipse,rgba(10,25,55,.8),transparent 70%)", filter: "blur(60px)" }} />
       </div>
 
+      {/* Mobile nav modal */}
+      <MobileNavModal
+        activeSection={activeSection}
+        onNavigate={scrollTo}
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
+
+      {/* ── Mobile FAB (bottom-left) — visible only on small screens ── */}
+      <button
+        onClick={() => setMobileNavOpen(true)}
+        className="mobile-nav-fab"
+        style={{
+          position: "fixed", bottom: 24, left: 20, zIndex: 80,
+          display: "none", /* overridden by CSS below */
+          alignItems: "center", gap: 8,
+          padding: "10px 16px", borderRadius: 999,
+          background: "rgba(5,12,24,.92)", backdropFilter: "blur(16px)",
+          border: "1px solid rgba(71,85,105,.45)",
+          color: "rgba(203,213,225,.8)", fontSize: 13, fontWeight: 600,
+          cursor: "pointer", boxShadow: "0 4px 24px rgba(0,0,0,.5)",
+          transition: "all 0.2s",
+        }}
+      >
+        <Menu style={{ width: 15, height: 15 }} />
+        Navigation
+      </button>
+
+      {/* Inline CSS for responsive breakpoints */}
+      <style>{`
+        @media (max-width: 768px) {
+          .desktop-sidebar { display: none !important; }
+          .mobile-nav-fab  { display: flex !important; }
+          .main-content    {
+            padding: 32px 20px 100px !important;
+            margin: 24px auto !important;
+          }
+        }
+        @media (min-width: 769px) {
+          .mobile-nav-fab  { display: none !important; }
+        }
+      `}</style>
+
       <div style={{ position: "relative", zIndex: 10, display: "flex", minHeight: "100vh" }}>
 
-        {/* ── SIDEBAR ── */}
-        <aside style={{
-          width: 252, flexShrink: 0, position: "sticky", top: 0, height: "100vh",
-          overflowY: "auto", padding: "28px 16px",
-          borderRight: "1px solid rgba(71,85,105,.25)",
-          background: "rgba(5,12,24,.92)", backdropFilter: "blur(16px)",
-        }}>
-          {/* Brand */}
-          <div style={{ marginBottom: 28, paddingBottom: 20, borderBottom: "1px solid rgba(71,85,105,.2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 5 }}>
-              <div style={{
-                width: 28, height: 28, borderRadius: 7,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(255,255,255,.06)", border: "1px solid rgba(71,85,105,.4)",
-              }}>
-                <Globe style={{ width: 14, height: 14, color: "rgba(148,163,184,.7)" }} />
-              </div>
-              <span style={{ fontSize: 15, fontWeight: 800, color: "rgba(226,232,240,.9)", letterSpacing: "-0.02em" }}>Orbital</span>
-              <span style={{
-                fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", padding: "1px 7px",
-                borderRadius: 999, color: "rgba(148,163,184,.6)",
-                background: "rgba(71,85,105,.2)", border: "1px solid rgba(71,85,105,.35)",
-              }}>DOCS</span>
-            </div>
-            <p style={{ fontSize: 11, color: "rgba(100,116,139,.7)", margin: 0, letterSpacing: "0.04em" }}>API Reference v1.0</p>
-          </div>
-
-          {/* Nav */}
-          <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {NAV_SECTIONS.map(s => {
-              const isActive = activeSection === s.id;
-              return (
-                <button key={s.id} onClick={() => scrollTo(s.id)} style={{
-                  display: "flex", alignItems: "center", gap: 9, padding: "8px 11px",
-                  borderRadius: 9, cursor: "pointer", textAlign: "left",
-                  background: isActive ? "rgba(255,255,255,.05)" : "transparent",
-                  border: `1px solid ${isActive ? "rgba(71,85,105,.4)" : "transparent"}`,
-                  color: isActive ? "rgba(203,213,225,.85)" : "rgba(100,116,139,.7)",
-                  fontSize: 13, fontWeight: isActive ? 600 : 400,
-                  transition: "all 0.15s",
-                }}>
-                  <s.icon style={{ width: 13, height: 13, flexShrink: 0 }} />
-                  {s.label}
-                  {isActive && <ChevronRight style={{ width: 11, height: 11, marginLeft: "auto", opacity: 0.5 }} />}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Implementations link */}
-          <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid rgba(71,85,105,.2)" }}>
-            <a href="/implementations" style={{
-              display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", borderRadius: 10,
-              background: "rgba(255,255,255,.03)", border: "1px solid rgba(71,85,105,.3)",
-              color: "rgba(148,163,184,.65)", fontSize: 12, fontWeight: 600, textDecoration: "none",
-              transition: "all 0.15s",
-            }}>
-              <Box style={{ width: 13, height: 13 }} />
-              Implementations
-              <ExternalLink style={{ width: 10, height: 10, marginLeft: "auto", opacity: 0.45 }} />
-            </a>
-          </div>
+        {/* ── DESKTOP SIDEBAR ── */}
+        <aside
+          className="desktop-sidebar"
+          style={{
+            width: 252, flexShrink: 0, position: "sticky", top: 0, height: "100vh",
+            overflowY: "auto", padding: "28px 16px",
+            borderRight: "1px solid rgba(71,85,105,.25)",
+            background: "rgba(5,12,24,.92)", backdropFilter: "blur(16px)",
+          }}
+        >
+          <NavContent activeSection={activeSection} onNavigate={scrollTo} />
         </aside>
 
         {/* ── MAIN ── */}
-        <main style={{ flex: 1, padding: "48px 52px 80px", maxWidth: 800, margin: "100px auto" }}>
-
-{/* OVERVIEW */}
-<section id="overview" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-  <SectionLabel>INTRODUCTION</SectionLabel>
-
-  <motion.h1
-    initial={{ opacity: 0, y: 14 }}
-    animate={{ opacity: 1, y: 0 }}
-    style={{
-      fontSize: "clamp(30px,4vw,48px)",
-      fontWeight: 900,
-      letterSpacing: "-0.03em",
-      margin: "0 0 14px",
-      lineHeight: 1.1,
-      color: "rgba(226,232,240,.95)",
-    }}
-  >
-    Orbital{" "}
-    <span
-      style={{
-        display: "inline-block",
-        background:
-          "linear-gradient(130deg,rgba(148,163,184,.9),rgba(203,213,225,.95) 50%,rgba(226,232,240,.8))",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-      }}
-    >
-      API Docs
-    </span>
-  </motion.h1>
-
-  <p
-    style={{
-      fontSize: 16,
-      color: "rgba(148,163,184,.65)",
-      lineHeight: 1.8,
-      margin: "0 0 18px",
-      fontWeight: 300,
-    }}
-  >
-    Orbital normalizes documents — CVs, invoices, contracts — into clean, structured JSON. Send a file, receive a webhook. That&apos;s the entire mental model.
-  </p>
-
-  <InfoBox type="info">
-    <strong style={{ color: "rgba(203,213,225,.9)" }}>Key rule:</strong> A{" "}
-    <code
-      style={{
-        background: "rgba(255,255,255,.06)",
-        padding: "1px 5px",
-        borderRadius: 4,
-        fontSize: 12,
-      }}
-    >
-      202 Accepted
-    </code>{" "}
-    response never means &quot;success&quot; — it means processing has started. The final result always arrives via your configured webhook.
-  </InfoBox>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: 12,
-      marginTop: 20,
-    }}
-  >
-    {[
-      {
-        Icon: Zap,
-        title: "Async by default",
-        desc: "Fire-and-forget architecture. Your users aren&apos;t waiting.",
-      },
-      {
-        Icon: Code2,
-        title: "Schema-first",
-        desc: "You define the output JSON structure. Orbital fills it in.",
-      },
-      {
-        Icon: ShieldCheck,
-        title: "Resilient delivery",
-        desc: "Built-in retries ensure webhook failures don&apos;t lose data.",
-      },
-    ].map((c, i) => (
-      <div
-        key={i}
-        style={{
-          padding: "16px 18px",
-          borderRadius: 12,
-          background: "rgba(255,255,255,.025)",
-          border: "1px solid rgba(71,85,105,.28)",
-        }}
-      >
-        <c.Icon
-          style={{
-            width: 16,
-            height: 16,
-            color: "rgba(148,163,184,.5)",
-            marginBottom: 8,
-          }}
-        />
-        <p
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: "rgba(203,213,225,.8)",
-            margin: "0 0 4px",
-          }}
+        <main
+          className="main-content"
+          style={{ flex: 1, padding: "48px 52px 80px", maxWidth: 800, margin: "100px auto" }}
         >
-          {c.title}
-        </p>
-        <p
-          style={{
-            fontSize: 12,
-            color: "rgba(100,116,139,.7)",
-            margin: 0,
-            lineHeight: 1.55,
-          }}
-        >
-          {c.desc}
-        </p>
-      </div>
-    ))}
-  </div>
-</section>
 
-{/* QUICKSTART */}
-<section id="quickstart" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
-  <SectionLabel>QUICK START</SectionLabel>
+          {/* OVERVIEW */}
+          <section id="overview" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
+            <SectionLabel>INTRODUCTION</SectionLabel>
 
-  <h2
-    style={{
-      fontSize: 26,
-      fontWeight: 800,
-      letterSpacing: "-0.02em",
-      margin: "0 0 16px",
-      color: "rgba(226,232,240,.9)",
-    }}
-  >
-    Up and running in 3 steps
-  </h2>
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                fontSize: "clamp(30px,4vw,48px)",
+                fontWeight: 900, letterSpacing: "-0.03em",
+                margin: "0 0 14px", lineHeight: 1.1,
+                color: "rgba(226,232,240,.95)",
+              }}
+            >
+              Orbital{" "}
+              <span style={{
+                display: "inline-block",
+                background: "linear-gradient(130deg,rgba(148,163,184,.9),rgba(203,213,225,.95) 50%,rgba(226,232,240,.8))",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+              }}>
+                API Docs
+              </span>
+            </motion.h1>
 
-  {[
-    {
-      n: "01",
-      title: "Create an API Key",
-      desc: "Dashboard → API Keys → Generate new key. Store it securely — it&apos;s shown only once.",
-    },
-    {
-      n: "02",
-      title: "Create an Endpoint",
-      desc: "Dashboard → Endpoints → New endpoint. Define your output JSON schema and set your webhook URL.",
-    },
-    {
-      n: "03",
-      title: "Send your first document",
-      desc: "POST a file to your endpoint URL. Receive 202 immediately, then structured JSON arrives at the webhook.",
-    },
-  ].map((step, i) => (
-    <motion.div
-      key={i}
-      initial={{ opacity: 0, x: -10 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: i * 0.08 }}
-      style={{
-        display: "flex",
-        gap: 18,
-        padding: "18px 22px",
-        marginBottom: 10,
-        borderRadius: 12,
-        background: "rgba(255,255,255,.025)",
-        border: "1px solid rgba(71,85,105,.28)",
-      }}
-    >
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 900,
-          color: "rgba(100,116,139,.6)",
-          fontFamily: "monospace",
-          minWidth: 22,
-          paddingTop: 2,
-          letterSpacing: "0.08em",
-        }}
-      >
-        {step.n}
-      </span>
-      <div>
-        <p
-          style={{
-            fontSize: 14,
-            fontWeight: 700,
-            color: "rgba(203,213,225,.85)",
-            margin: "0 0 4px",
-          }}
-        >
-          {step.title}
-        </p>
-        <p
-          style={{
-            fontSize: 13,
-            color: "rgba(100,116,139,.7)",
-            margin: 0,
-            lineHeight: 1.6,
-          }}
-        >
-          {step.desc}
-        </p>
-      </div>
-    </motion.div>
-  ))}
+            <p style={{ fontSize: 16, color: "rgba(148,163,184,.65)", lineHeight: 1.8, margin: "0 0 18px", fontWeight: 300 }}>
+              Orbital normalizes documents — CVs, invoices, contracts — into clean, structured JSON. Send a file, receive a webhook. That&apos;s the entire mental model.
+            </p>
 
+            <InfoBox type="info">
+              <strong style={{ color: "rgba(203,213,225,.9)" }}>Key rule:</strong> A{" "}
+              <code style={{ background: "rgba(255,255,255,.06)", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>202 Accepted</code>{" "}
+              response never means &quot;success&quot; — it means processing has started. The final result always arrives via your configured webhook.
+            </InfoBox>
 
-            <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(100,116,139,.6)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0 0 8px" }}>Phase 2 — Async (webhook)</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginTop: 20 }}>
+              {[
+                { Icon: Zap,        title: "Async by default", desc: "Fire-and-forget architecture. Your users aren't waiting." },
+                { Icon: Code2,      title: "Schema-first",     desc: "You define the output JSON structure. Orbital fills it in." },
+                { Icon: ShieldCheck,title: "Resilient delivery",desc: "Built-in retries ensure webhook failures don't lose data." },
+              ].map((c, i) => (
+                <div key={i} style={{ padding: "16px 18px", borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)" }}>
+                  <c.Icon style={{ width: 16, height: 16, color: "rgba(148,163,184,.5)", marginBottom: 8 }} />
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "rgba(203,213,225,.8)", margin: "0 0 4px" }}>{c.title}</p>
+                  <p style={{ fontSize: 12, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.55 }}>{c.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* QUICKSTART */}
+          <section id="quickstart" style={{ scrollMarginTop: 32, marginBottom: 60 }}>
+            <SectionLabel>QUICK START</SectionLabel>
+            <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 16px", color: "rgba(226,232,240,.9)" }}>
+              Up and running in 3 steps
+            </h2>
+
+            {[
+              { n: "01", title: "Create an API Key",          desc: "Dashboard → API Keys → Generate new key. Store it securely — it's shown only once." },
+              { n: "02", title: "Create an Endpoint",         desc: "Dashboard → Endpoints → New endpoint. Define your output JSON schema and set your webhook URL." },
+              { n: "03", title: "Send your first document",   desc: "POST a file to your endpoint URL. Receive 202 immediately, then structured JSON arrives at the webhook." },
+            ].map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                style={{
+                  display: "flex", gap: 18, padding: "18px 22px", marginBottom: 10,
+                  borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)",
+                }}
+              >
+                <span style={{ fontSize: 11, fontWeight: 900, color: "rgba(100,116,139,.6)", fontFamily: "monospace", minWidth: 22, paddingTop: 2, letterSpacing: "0.08em" }}>{step.n}</span>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "rgba(203,213,225,.85)", margin: "0 0 4px" }}>{step.title}</p>
+                  <p style={{ fontSize: 13, color: "rgba(100,116,139,.7)", margin: 0, lineHeight: 1.6 }}>{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Phase 2 async errors table */}
+            <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(100,116,139,.6)", letterSpacing: "0.1em", textTransform: "uppercase", margin: "24px 0 8px" }}>Phase 2 — Async (webhook)</p>
             <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(71,85,105,.28)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1.4fr", padding: "9px 14px", background: "rgba(255,255,255,.03)", borderBottom: "1px solid rgba(71,85,105,.2)" }}>
                 {["Scenario", "Detection", "Suggested response"].map(h => (
@@ -1020,17 +1070,13 @@ export default function DocsPage() {
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 8 }}>
               {[
-                { state: "idle",       Icon: Clock,       desc: "Awaiting upload.",         ui: "Show form."           },
-                { state: "loading",    Icon: Activity,    desc: "Sending to Orbital.",      ui: "Brief spinner."       },
-                { state: "processing", Icon: Zap,         desc: "Awaiting webhook.",        ui: "Persistent message."  },
-                { state: "succeeded",  Icon: CheckCircle, desc: "Result received.",         ui: "Render data."         },
-                { state: "failed",     Icon: XCircle,     desc: "Error in any phase.",      ui: "Show retry."          },
+                { state: "idle",       Icon: Clock,        desc: "Awaiting upload.",      ui: "Show form."           },
+                { state: "loading",    Icon: Activity,     desc: "Sending to Orbital.",   ui: "Brief spinner."       },
+                { state: "processing", Icon: Zap,          desc: "Awaiting webhook.",     ui: "Persistent message."  },
+                { state: "succeeded",  Icon: CheckCircle,  desc: "Result received.",      ui: "Render data."         },
+                { state: "failed",     Icon: XCircle,      desc: "Error in any phase.",   ui: "Show retry."          },
               ].map(({ state, Icon, desc, ui }) => (
-                <div key={state} style={{
-                  padding: "14px", borderRadius: 12,
-                  background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)",
-                  textAlign: "center",
-                }}>
+                <div key={state} style={{ padding: "14px", borderRadius: 12, background: "rgba(255,255,255,.025)", border: "1px solid rgba(71,85,105,.28)", textAlign: "center" }}>
                   <Icon style={{ width: 18, height: 18, color: "rgba(148,163,184,.5)", margin: "0 auto 7px" }} />
                   <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(203,213,225,.7)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 5px" }}>{state}</p>
                   <p style={{ fontSize: 11, color: "rgba(100,116,139,.6)", margin: "0 0 4px", lineHeight: 1.45 }}>{desc}</p>
