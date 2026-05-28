@@ -3,7 +3,7 @@
 export type PriceConfig = {
   priceId: string;
   productId: string;
-  tier: "free" | "starter" | "production" | "enterprise";
+  tier: "free" | "starter" | "premium" | "enterprise";
   credits: number;
   amountEUR: number;
 };
@@ -36,21 +36,21 @@ export const PRICES: Record<string, PriceConfig> = {
   price_1SkD1ECAyOauno7d0ufipSZZ: {
     priceId: "price_1SkD1ECAyOauno7d0ufipSZZ",
     productId: "prod_ThcE9Fe7rUaQPE",
-    tier: "production",
+    tier: "premium",
     credits: 10_000_000,
     amountEUR: 12.99,
   },
   price_1SkD0sCAyOauno7dG2R8FMwy: {
     priceId: "price_1SkD0sCAyOauno7dG2R8FMwy",
     productId: "prod_ThcE9Fe7rUaQPE",
-    tier: "production",
+    tier: "premium",
     credits: 5_000_000,
     amountEUR: 7.99,
   },
   price_1SkD04CAyOauno7deX8JWguR: {
     priceId: "price_1SkD04CAyOauno7deX8JWguR",
     productId: "prod_ThcE9Fe7rUaQPE",
-    tier: "production",
+    tier: "premium",
     credits: 1_000_000,
     amountEUR: 2.25,
   },

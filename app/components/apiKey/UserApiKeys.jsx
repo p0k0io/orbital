@@ -28,7 +28,6 @@ export default function UserApiKeys() {
 
     const fetchKeys = async () => {
       setLoading(true);
-
       try {
         const res = await fetch("/api/get/api-keys", {
           method: "POST",
@@ -59,7 +58,6 @@ export default function UserApiKeys() {
     if (!selectedKey) return;
 
     setDeleting(true);
-
     try {
       const res = await fetch("/api/delete/api-key", {
         method: "POST",
@@ -70,15 +68,11 @@ export default function UserApiKeys() {
       const data = await res.json();
 
       if (res.ok) {
-        setKeys((prev) =>
-          prev.filter((k) => k.id_key !== selectedKey.id_key)
-        );
+        setKeys((prev) => prev.filter((k) => k.id_key !== selectedKey.id_key));
         setToast({
           type: "success",
           text: "Operación realizada correctamente",
         });
-
-        
       } else {
         console.error(data.error);
       }
@@ -91,42 +85,43 @@ export default function UserApiKeys() {
     }
   };
 
-  if (loading) return <p className="text-white/70">Cargando API keys...</p>;
+  if (loading)
+    return <p className="text-gray-400 text-sm">Cargando API keys...</p>;
 
   if (!keys || keys.length === 0)
-    return <p className="text-white/70">No tienes API keys aún.</p>;
+    return <p className="text-gray-400 text-sm">No tienes API keys aún.</p>;
 
   return (
     <>
-      <div className="w-full max-w-3xl flex flex-col gap-3">
+      <div className="w-full flex flex-col gap-3">
         {keys.map((k, idx) => (
           <div
             key={`${k.name}-${k.created_at}-${idx}`}
-            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 flex items-center justify-between shadow-md hover:bg-white/20 transition-all"
+            className="p-4 rounded-2xl bg-gray-800 border border-gray-700 shadow-md hover:-translate-y-0.5 transform transition-all duration-300 flex items-center justify-between"
           >
-            {/* Nombre */}
+            {/* Nombre + prefijo */}
             <div className="flex flex-col w-1/3 truncate">
-              <span className="text-white font-semibold truncate">
-                {k.name}
-              </span>
-              <span className="text-white/50 text-xs truncate">
+              <span className="text-white font-semibold truncate">{k.name}</span>
+              <span className="text-gray-400 text-xs truncate font-mono mt-0.5">
                 {k.pre}...
               </span>
             </div>
 
             {/* Fecha */}
-            <span className="text-white/50 text-xs w-1/3 text-right">
+            <span className="text-gray-400 text-xs w-1/3 text-center">
               {new Date(k.created_at).toLocaleDateString()}
             </span>
 
             {/* Botón eliminar */}
-            <button
-              onClick={() => openDeleteModal(k)}
-              className="ml-4 flex items-center justify-center w-8 h-8 bg-red-500 rounded-md hover:bg-red-600 transition"
-              title="Eliminar API Key"
-            >
-              <FiTrash2 size={16} className="text-white" />
-            </button>
+            <div className="w-1/3 flex justify-end">
+              <button
+                onClick={() => openDeleteModal(k)}
+                className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-600 hover:bg-red-700 transition-colors shadow-sm"
+                title="Eliminar API Key"
+              >
+                <FiTrash2 size={15} className="text-white" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

@@ -1,7 +1,20 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Upload, Send, CheckCircle, Loader, Plus, Trash2 } from "lucide-react";
+import {
+  X,
+  Upload,
+  Send,
+  CheckCircle,
+  Loader,
+  Plus,
+  Trash2,
+  FlaskConical,
+  Key,
+  FileUp,
+  Tag,
+  Webhook,
+} from "lucide-react";
 
 export default function TestModal({ isOpen, onClose, endpointId }) {
   const [file, setFile] = useState(null);
@@ -15,7 +28,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const [metaRows, setMetaRows] = useState([{ key: "", value: "" }]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
-  const apiUrl = "http://87.106.125.227:8000";
+  const apiUrl = "http://localhost:8000";
 
   const handleSaveApiKey = () => {
     if (!apiKey) { setError("Introduce una API Key válida."); return; }
@@ -111,154 +124,129 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const metaPreview = buildMetadata();
 
   return (
+    /* Overlay: solo blur + oscuridad en el fondo */
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div
-        className="relative w-[880px] max-w-[95vw] max-h-[90vh] flex flex-col overflow-hidden"
-        style={{
-          background: "#141414",
-          border: "0.5px solid #2a2a2a",
-          borderRadius: "14px",
-        }}
-      >
-        {/* Top accent */}
-        <div style={{ height: "2px", background: "#378ADD" }} />
+
+      {/* Modal: completamente opaco, sin ninguna transparencia */}
+      <div className="relative flex w-[900px] max-w-[95vw] max-h-[90vh] flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl">
 
         {/* Header */}
-        <div
-          className="flex items-center justify-between px-5 py-3"
-          style={{ borderBottom: "0.5px solid #232323" }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div
-              className={loading ? "animate-pulse" : ""}
-              style={{ width: 7, height: 7, borderRadius: "50%", background: "#378ADD", flexShrink: 0 }}
-            />
-            <span style={{ fontSize: 13, fontWeight: 500, color: "#e0e0e0" }}>Test endpoint</span>
-            <span
-              style={{
-                fontFamily: "monospace", fontSize: 10, color: "#555",
-                background: "#1e1e1e", border: "0.5px solid #2e2e2e",
-                padding: "2px 8px", borderRadius: 20,
-              }}
-            >
-              v1
-            </span>
+        <header className="flex items-center justify-between gap-4 border-b border-zinc-700 bg-zinc-950 px-6 py-5">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="rounded-xl bg-blue-600 p-2 text-white">
+              <FlaskConical size={20} />
+            </div>
+            <div className="min-w-0">
+              <h2 className="truncate text-xl font-bold text-white">Test Endpoint</h2>
+              <p className="text-xs text-zinc-400 font-mono">{endpointId}</p>
+            </div>
           </div>
+
           <button
             onClick={onClose}
-            style={{
-              background: "none", border: "none", cursor: "pointer",
-              color: "#555", padding: "4px 6px", borderRadius: 6, fontSize: 15, lineHeight: 1,
-            }}
+            className="flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 p-2 text-zinc-400 transition hover:bg-zinc-700 hover:text-white"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
-        </div>
+        </header>
 
         {/* Body */}
         <div className="flex flex-1 min-h-0 overflow-hidden">
 
           {/* LEFT */}
-          <div
-            className="flex-1 overflow-y-auto p-5 flex flex-col gap-5"
-            style={{ borderRight: "0.5px solid #232323" }}
-          >
-            {/* Endpoint */}
-            <div>
-              <p style={labelStyle}>Endpoint</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#1a1a1a", border: "0.5px solid #2a2a2a", borderRadius: 8, padding: "8px 12px" }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#378ADD", flexShrink: 0 }} />
-                <span style={{ fontFamily: "monospace", fontSize: 11, color: "#555" }}>
-                  {apiUrl}/<span style={{ color: "#aaa" }}>{endpointId}</span>
-                </span>
-              </div>
-            </div>
+          <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
 
             {/* API Key */}
-            <div>
-              <p style={labelStyle}>API Key</p>
-              <div className="flex gap-2">
+            <SectionBlock icon={Key} title="API Key">
+              <div className="flex gap-3">
                 <input
                   type="password"
                   placeholder="sk-••••••••••••••••"
                   value={apiKey}
                   onChange={(e) => { setApiKey(e.target.value); setApiKeySaved(false); }}
-                  style={inputStyle}
+                  className="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-2.5 font-mono text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition"
                 />
-                <button onClick={handleSaveApiKey} style={btnPrimaryStyle}>
-                  {apiKeySaved ? <><CheckCircle size={12} /> Guardada</> : "Guardar"}
+                <button
+                  onClick={handleSaveApiKey}
+                  className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-700 hover:text-white"
+                >
+                  {apiKeySaved
+                    ? <><CheckCircle size={14} className="text-green-400" /><span className="text-green-400">Saved</span></>
+                    : "Save"
+                  }
                 </button>
               </div>
               {apiKeySaved && (
-                <p style={{ marginTop: 5, fontSize: 11, color: "#378ADD", display: "flex", alignItems: "center", gap: 4 }}>
-                  <CheckCircle size={11} /> API Key activa
+                <p className="mt-2 flex items-center gap-2 text-xs text-green-400">
+                  <CheckCircle size={12} /> API Key active for the session
                 </p>
               )}
-            </div>
+            </SectionBlock>
 
             {/* File */}
-            <div>
-              <p style={labelStyle}>Archivo</p>
+            <SectionBlock icon={FileUp} title="File">
               <div
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
-                style={{
-                  border: `1.5px dashed ${file ? "#378ADD" : dragOver ? "#378ADD" : "#2a2a2a"}`,
-                  background: file || dragOver ? "#1a1a1a" : "#141414",
-                  borderRadius: 10, padding: 20, textAlign: "center", cursor: "pointer",
-                  transition: "border-color 0.15s, background 0.15s",
-                }}
+                className={`
+                  relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-8 transition
+                  ${file || dragOver
+                    ? "border-blue-500 bg-blue-950"
+                    : "border-zinc-700 bg-zinc-800 hover:border-zinc-500"
+                  }
+                `}
               >
                 <input
                   ref={fileInputRef}
                   type="file"
-                  style={{ display: "none" }}
+                  className="hidden"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
                 {file ? (
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-                    <CheckCircle size={13} style={{ color: "#378ADD" }} />
-                    <span style={{ fontSize: 12, fontWeight: 500, color: "#ccc" }}>{file.name}</span>
-                    <span style={{ fontSize: 11, color: "#444" }}>({(file.size / 1024).toFixed(1)} KB)</span>
-                  </div>
+                  <>
+                    <div className="rounded-xl bg-blue-600 p-3 text-white">
+                      <CheckCircle size={20} />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-white">{file.name}</p>
+                      <p className="text-xs text-zinc-500 mt-1">{(file.size / 1024).toFixed(1)} KB</p>
+                    </div>
+                  </>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                    <Upload size={17} style={{ color: "#333" }} />
-                    <span style={{ fontSize: 12, color: "#333" }}>Arrastra o haz clic para seleccionar</span>
-                  </div>
+                  <>
+                    <div className="rounded-xl bg-zinc-700 p-3 text-zinc-400">
+                      <Upload size={20} />
+                    </div>
+                    <p className="text-sm text-zinc-500">Drag a file or click to select</p>
+                  </>
                 )}
               </div>
-            </div>
+            </SectionBlock>
 
             {/* Divider */}
-            <div style={{ height: "0.5px", background: "#1e1e1e" }} />
+            <div className="h-px bg-zinc-800" />
 
             {/* Metadata */}
-            <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                <p style={{ ...labelStyle, marginBottom: 0 }}>Metadata</p>
-                <span style={{ fontSize: 10, color: "#333" }}>opcional</span>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 28px", gap: 8, marginBottom: 5, padding: "0 2px" }}>
+            <SectionBlock icon={Tag} title="Metadata" optional>
+              <div className="grid grid-cols-[1fr_1fr_32px] gap-2 px-1 mb-2">
                 {["Key", "Value", ""].map((h, i) => (
-                  <span key={i} style={{ fontSize: 10, letterSpacing: "0.07em", textTransform: "uppercase", color: "#383838" }}>{h}</span>
+                  <p key={i} className="text-[10px] uppercase tracking-widest text-zinc-600">{h}</p>
                 ))}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div className="flex flex-col gap-2">
                 {metaRows.map((row, i) => (
-                  <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 28px", gap: 8, alignItems: "center" }}>
+                  <div key={i} className="grid grid-cols-[1fr_1fr_32px] gap-2 items-center">
                     <input
-                      style={metaInputStyle}
+                      className="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 font-mono text-xs text-white placeholder-zinc-600 outline-none focus:border-blue-500 transition"
                       placeholder="user_id"
                       value={row.key}
                       onChange={(e) => updateMetaRow(i, "key", e.target.value)}
                     />
                     <input
-                      style={metaInputStyle}
+                      className="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 font-mono text-xs text-white placeholder-zinc-600 outline-none focus:border-blue-500 transition"
                       placeholder="valor"
                       value={row.value}
                       onChange={(e) => updateMetaRow(i, "value", e.target.value)}
@@ -266,14 +254,9 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
                     <button
                       onClick={() => removeMetaRow(i)}
                       disabled={metaRows.length === 1}
-                      style={{
-                        background: "none", border: "none", cursor: metaRows.length === 1 ? "not-allowed" : "pointer",
-                        color: "#383838", padding: 5, borderRadius: 6,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        opacity: metaRows.length === 1 ? 0.2 : 1,
-                      }}
+                      className="flex items-center justify-center rounded-lg p-1.5 text-zinc-600 transition hover:bg-red-950 hover:text-red-400 disabled:opacity-20 disabled:cursor-not-allowed"
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 ))}
@@ -281,133 +264,114 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
 
               <button
                 onClick={addMetaRow}
-                style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "#378ADD", background: "none", border: "none", cursor: "pointer", padding: "2px 0", marginTop: 8 }}
+                className="mt-3 flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs text-zinc-400 transition hover:bg-zinc-700 hover:text-white"
               >
-                <Plus size={13} /> Añadir campo
+                <Plus size={13} /> Add Field
               </button>
 
               {metaPreview && (
-                <div style={{ marginTop: 10 }}>
-                  <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.07em", color: "#383838", marginBottom: 5 }}>
-                    Preview JSON
-                  </p>
-
-                  <div
-                    style={{
-                      background: "#0e0e0e",
-                      border: "0.5px solid #232323",
-                      borderRadius: 8,
-                      padding: "10px 12px",
-                      fontFamily: "monospace",
-                      fontSize: 11,
-                      lineHeight: 1.7,
-                      color: "#444"
-                    }}
-                  >
-                    <span style={{ color: "#444" }}>{"{ "}</span>
-
-                    {Object.entries(metaPreview).map(([k, v], i, arr) => (
-                      <span key={k}>
-                        <span style={{ color: "#378ADD" }}>{`"${k}"`}</span>
-                        <span style={{ color: "#444" }}>: </span>
-                        <span style={{ color: "#aaa" }}>{`"${v}"`}</span>
-
-                        {i < arr.length - 1 && <span style={{ color: "#444" }}>, </span>}
-                      </span>
-                    ))}
-
-                    <span style={{ color: "#444" }}>{" }"}</span>
+                <div className="mt-4 overflow-hidden rounded-xl border border-zinc-700 bg-zinc-950">
+                  <div className="border-b border-zinc-700 px-4 py-2">
+                    <p className="text-[10px] uppercase tracking-widest text-zinc-600">Preview JSON</p>
                   </div>
+                  <pre className="overflow-x-auto px-4 py-3 font-mono text-xs leading-5 text-zinc-400">
+                    {JSON.stringify(metaPreview, null, 2)}
+                  </pre>
                 </div>
               )}
-            </div>
+            </SectionBlock>
 
             {/* Error / Success */}
             {error && (
-              <div style={{ fontSize: 12, color: "#E24B4A", background: "#1a0909", border: "0.5px solid #4a1515", borderRadius: 8, padding: "10px 12px" }}>
+              <div className="flex items-center gap-3 rounded-xl border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-400">
                 {error}
               </div>
             )}
             {success && (
-              <div style={{ fontSize: 12, color: "#639922", background: "#111a09", border: "0.5px solid #27500A", borderRadius: 8, padding: "10px 12px", display: "flex", alignItems: "flex-start", gap: 7 }}>
-                <CheckCircle size={13} style={{ color: "#639922", flexShrink: 0, marginTop: 1 }} />
+              <div className="flex items-start gap-3 rounded-xl border border-green-800 bg-green-950 px-4 py-3">
+                <CheckCircle size={15} className="mt-0.5 shrink-0 text-green-400" />
                 <div>
-                  <span>{success}</span>
-                  {requestId && <p style={{ fontFamily: "monospace", fontSize: 10, color: "#3B6D11", marginTop: 3 }}>{requestId}</p>}
+                  <p className="text-sm text-green-400">{success}</p>
+                  {requestId && (
+                    <p className="mt-1 font-mono text-xs text-green-700">{requestId}</p>
+                  )}
                 </div>
               </div>
             )}
-
-            {/* Actions */}
-            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", paddingTop: 4 }}>
-              <button onClick={onClose} style={btnCancelStyle}>Cerrar</button>
-              <button
-                onClick={handleSend}
-                disabled={loading || !apiKeySaved}
-                style={{ ...btnPrimaryStyle, opacity: loading || !apiKeySaved ? 0.35 : 1, cursor: loading || !apiKeySaved ? "not-allowed" : "pointer" }}
-              >
-                {loading
-                  ? <><Loader size={13} className="animate-spin" /> Enviando...</>
-                  : <><Send size={13} /> Enviar</>
-                }
-              </button>
-            </div>
           </div>
 
           {/* RIGHT — Webhook response */}
-          <div style={{ width: 255, flexShrink: 0, padding: 18, background: "#0e0e0e", display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <p style={labelStyle}>Webhook response</p>
+          <aside className="flex w-64 shrink-0 flex-col gap-4 overflow-hidden border-l border-zinc-700 bg-zinc-950 p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="rounded-lg bg-zinc-800 p-1.5 text-zinc-400">
+                  <Webhook size={14} />
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+                  Response
+                </p>
+              </div>
               {loading && (
-                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "#555", background: "#141414", border: "0.5px solid #2a2a2a", padding: "2px 8px", borderRadius: 20, fontFamily: "monospace" }}>
-                  <Loader size={9} className="animate-spin" /> procesando
+                <span className="flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800 px-2 py-0.5 font-mono text-[10px] text-zinc-500">
+                  <Loader size={9} className="animate-spin" /> processing
                 </span>
               )}
             </div>
-            <div style={{ flex: 1, minHeight: 180, background: "#141414", border: "0.5px solid #232323", borderRadius: 8, padding: 12, fontFamily: "monospace", fontSize: 11, lineHeight: 1.7, color: "#555", whiteSpace: "pre-wrap", wordBreak: "break-all", overflow: "auto" }}>
-              {webhookResponse || (
-                <span style={{ color: "#2a2a2a" }}>
-                  {loading ? "Esperando respuesta..." : "Esperando envío..."}
-                </span>
-              )}
-            </div>
-          </div>
 
+            <div className="flex-1 overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-4">
+              {webhookResponse ? (
+                <pre className="whitespace-pre-wrap break-all font-mono text-xs leading-5 text-zinc-300">
+                  {webhookResponse}
+                </pre>
+              ) : (
+                <p className="font-mono text-xs text-zinc-700">
+                  {loading ? "Waiting for response..." : "Waiting for submission..."}
+                </p>
+              )}
+            </div>
+          </aside>
         </div>
 
-        {/* Bottom accent */}
-        <div style={{ height: "0.5px", background: "#1e1e1e" }} />
+        {/* Footer */}
+        <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-zinc-700 bg-zinc-950 px-6 py-5">
+          <button
+            onClick={onClose}
+            className="rounded-xl border border-zinc-700 bg-zinc-800 px-5 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-700 hover:text-white"
+          >
+            Close
+          </button>
+
+          <button
+            onClick={handleSend}
+            disabled={loading || !apiKeySaved}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {loading
+              ? <><Loader size={15} className="animate-spin" /> Sending...</>
+              : <><Send size={15} /> Send</>
+            }
+          </button>
+        </footer>
       </div>
     </div>
   );
 }
 
-const labelStyle = {
-  fontSize: 10, fontWeight: 500, letterSpacing: "0.09em",
-  textTransform: "uppercase", color: "#444", marginBottom: 6,
-};
-
-const inputStyle = {
-  flex: 1, background: "#1a1a1a", border: "0.5px solid #2e2e2e",
-  borderRadius: 8, padding: "8px 12px", fontSize: 12,
-  fontFamily: "monospace", color: "#d0d0d0", outline: "none",
-};
-
-const metaInputStyle = {
-  background: "#1a1a1a", border: "0.5px solid #2e2e2e",
-  borderRadius: 8, padding: "7px 10px", fontSize: 12,
-  fontFamily: "monospace", color: "#ccc", outline: "none",
-};
-
-const btnPrimaryStyle = {
-  display: "flex", alignItems: "center", gap: 6,
-  background: "#378ADD", color: "#fff", border: "none", cursor: "pointer",
-  fontSize: 12, fontWeight: 500, padding: "8px 14px", borderRadius: 8,
-  flexShrink: 0,
-};
-
-const btnCancelStyle = {
-  fontSize: 12, fontWeight: 500, padding: "8px 14px",
-  borderRadius: 8, cursor: "pointer",
-  background: "none", border: "0.5px solid #2e2e2e", color: "#555",
-};
+function SectionBlock({ icon: Icon, title, optional, children }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <div className="rounded-lg bg-zinc-800 p-1.5 text-zinc-400">
+          <Icon size={14} />
+        </div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{title}</p>
+        {optional && (
+          <span className="ml-auto rounded-full border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-600">
+            opcional
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}

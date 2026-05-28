@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Copy, Check, Key } from "lucide-react";
+import { Copy, Check, Key, X, AlertTriangle, Loader2 } from "lucide-react";
 import ToastNotification from "../ToastNotification";
-
 import { useRouter } from "next/navigation";
 
 export default function CreateApiKeyPopup({ open, onClose, onCreated }) {
@@ -16,7 +15,6 @@ export default function CreateApiKeyPopup({ open, onClose, onCreated }) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
-
   const [toast, setToast] = useState(null);
 
   if (!open) return null;
@@ -32,70 +30,55 @@ export default function CreateApiKeyPopup({ open, onClose, onCreated }) {
       const res = await fetch("/api/create/api-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          name: keyName,
-        }),
+        body: JSON.stringify({ userId: user.id, name: keyName }),
       });
 
       if (!res.ok) {
-        setToast({
-          type: "error",
-          text: "Operación fallida",
-        });
+        setToast({ type: "error", text: "Operation failed" });
       }
 
       const data = await res.json();
       setApiKey(data.apiKey);
-      setToast({
-      type: "success",
-      text: "Operación realizada correctamente",
-    });
-  
+      setToast({ type: "success", text: "API Key created successfully" });
     } catch (err) {
       console.error(err);
-      setError("No se pudo generar la API Key");
+      setError("Could not generate the API Key");
     } finally {
       setLoading(false);
     }
   };
 
   /* ---------------- COPY LOGIC ---------------- */
- const handleCopy = async () => {
-  if (!apiKey) return;
+  const handleCopy = async () => {
+    if (!apiKey) return;
 
-  // Clipboard API (HTTPS o localhost)
-  if (navigator?.clipboard?.writeText) {
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(apiKey);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+        return;
+      } catch (err) {
+        console.warn("Clipboard API failed, using fallback");
+      }
+    }
+
     try {
-      await navigator.clipboard.writeText(apiKey);
+      const textarea = document.createElement("textarea");
+      textarea.value = apiKey;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      return;
     } catch (err) {
-      console.warn("Clipboard API falló, usando fallback");
+      console.error("Could not copy the API Key", err);
     }
-  }
-
-  // Fallback (HTTP / VPS)
-  try {
-    const textarea = document.createElement("textarea");
-    textarea.value = apiKey;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  } catch (err) {
-    console.error("No se pudo copiar la API Key", err);
-  }
-};
+  };
 
   /* ---------------- RESET / CLOSE ---------------- */
   const handleClose = () => {
@@ -103,101 +86,165 @@ export default function CreateApiKeyPopup({ open, onClose, onCreated }) {
     setApiKey(null);
     setCopied(false);
     setError(null);
-      router.refresh();
-      onCreated?.(); 
-    onClose();   
+    router.refresh();
+    onCreated?.();
+    onClose();
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-white/15 bg-black/30 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition-all focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/20";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-neutral-900 shadow-2xl overflow-hidden">
-        {/* Header */}
-        <header className="border-b border-white/10 px-6 py-5">
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-            <Key size={18} />
-            Generar API Key
-          </h2>
-        </header>
+    <>
+      {/* Overlay */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6 backdrop-blur-md">
+        {/* Modal */}
+        <div className="relative flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/15 bg-white/10 shadow-2xl">
 
-        {/* Content */}
-        <div className="space-y-6 p-6">
-          {!apiKey ? (
-            <>
-              <div className="space-y-2">
-                <label className="text-sm text-white/70">
-                  Nombre de la API Key
-                </label>
-                <input
-                  value={keyName}
-                  onChange={(e) => setKeyName(e.target.value)}
-                  placeholder="Ej: Producción, Backend"
-                  className="w-full rounded-xl border border-white/20 bg-black/30 px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+          {/* Header */}
+          <header className="flex items-center justify-between border-b border-white/10 bg-black/30 px-6 py-5 backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-blue-500/20 p-2 text-blue-400">
+                <Key size={20} />
               </div>
 
-              {error && (
-                <p className="text-sm text-red-400">{error}</p>
-              )}
-            </>
-          ) : (
-            <>
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="mb-2 text-xs text-white/60">
-                  Guarda esta API Key, no se mostrará de nuevo
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  Generate API Key
+                </h2>
+                <p className="text-xs text-white/50">
+                  Create a new API key for your account
                 </p>
-
-                <div className="flex items-center justify-between gap-3 rounded-lg bg-black/40 px-4 py-3 font-mono text-sm text-white">
-                  <span className="truncate select-all">{apiKey}</span>
-
-                  <button
-                    onClick={handleCopy}
-                    className="flex items-center gap-1 text-white/60 hover:text-white transition"
-                  >
-                    {copied ? (
-                      <>
-                        <Check size={16} />
-                        Copiado
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={16} />
-                        Copiar
-                      </>
-                    )}
-                  </button>
-                </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
 
-        {/* Footer */}
-        <footer className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/30 px-6 py-5">
-          <button
-            onClick={handleClose}
-            className="rounded-xl bg-gray-600 px-5 py-2.5 text-sm text-white hover:bg-gray-700 transition"
-          >
-            Cerrar
-          </button>
-
-          {!apiKey && (
             <button
-              onClick={handleCreateKey}
-              disabled={loading || !keyName}
-              className="rounded-xl bg-slate-700 px-5 py-2.5 text-sm text-white hover:bg-slate-600 transition disabled:opacity-50"
+              onClick={handleClose}
+              className="rounded-lg p-2 text-white/50 transition hover:bg-white/10 hover:text-white"
             >
-              {loading ? "Generando..." : "Generar"}
+              <X size={18} />
             </button>
-          )}
-        </footer>
+          </header>
+
+          {/* Content */}
+          <div className="flex flex-col gap-5 p-6">
+
+            {!apiKey ? (
+              <>
+                {/* Key name input */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-white/50">
+                    <Key size={13} />
+                    Key name
+                  </label>
+                  <input
+                    value={keyName}
+                    onChange={(e) => setKeyName(e.target.value)}
+                    placeholder="e.g. Production, Backend, Mobile"
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* Warning banner */}
+                <div className="flex items-start gap-3 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3">
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-yellow-400" />
+                  <p className="text-xs leading-relaxed text-yellow-300">
+                    <span className="font-semibold">Important:</span> Your API key will only be shown once immediately after creation. Make sure to copy and store it in a safe place — you won&apos;t be able to retrieve it again.
+                  </p>
+                </div>
+
+                {/* Error */}
+                {error && (
+                  <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3">
+                    <p className="text-sm text-red-400">{error}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Warning banner (post-creation) */}
+                <div className="flex items-start gap-3 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3">
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-yellow-400" />
+                  <p className="text-xs leading-relaxed text-yellow-300">
+                    <span className="font-semibold">This is the only time your key will be shown.</span> Copy it now and store it securely — it cannot be recovered once you close this window.
+                  </p>
+                </div>
+
+                {/* Key display */}
+                <div className="rounded-xl border border-green-500/20 bg-green-500/10 p-4">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Check size={16} className="text-green-400" />
+                    <p className="text-sm font-medium text-green-400">
+                      API Key generated successfully
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+                    <span className="truncate font-mono text-sm text-white/80 select-all">
+                      {apiKey}
+                    </span>
+
+                    <button
+                      onClick={handleCopy}
+                      className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+                    >
+                      {copied ? (
+                        <>
+                          <Check size={14} />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Footer */}
+          <footer className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/30 px-6 py-5">
+            <button
+              onClick={handleClose}
+              className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              {apiKey ? "Close" : "Cancel"}
+            </button>
+
+            {!apiKey && (
+              <button
+                onClick={handleCreateKey}
+                disabled={loading || !keyName}
+                className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Key size={15} />
+                    Generate Key
+                  </>
+                )}
+              </button>
+            )}
+          </footer>
+        </div>
       </div>
-       {toast && (
+
+      {toast && (
         <ToastNotification
           type={toast.type}
           text={toast.text}
           onClose={() => setToast(null)}
         />
       )}
-    </div>
+    </>
   );
 }
