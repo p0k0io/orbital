@@ -28,7 +28,7 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   const [metaRows, setMetaRows] = useState([{ key: "", value: "" }]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
-  const apiUrl = "http://localhost:8000";
+  const apiUrl = "https://orbital-ocr.com/backend";
 
   const handleSaveApiKey = () => {
     if (!apiKey) { setError("Introduce una API Key válida."); return; }
@@ -55,8 +55,8 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
   };
 
   const handleSend = async () => {
-    if (!file) { setError("Selecciona un archivo primero."); return; }
-    if (!apiKeySaved) { setError("Guarda tu API Key antes de enviar."); return; }
+    if (!file) { setError("Select a file first."); return; }
+    if (!apiKeySaved) { setError("Save your API Key before sending."); return; }
 
     setLoading(true);
     setError("");
@@ -79,11 +79,11 @@ export default function TestModal({ isOpen, onClose, endpointId }) {
       if (res.status === 401) throw new Error("Unauthorized: revisa tu API Key");
       if (res.status !== 202) {
         const text = await res.text();
-        throw new Error(`Error al enviar el archivo: ${text}`);
+        throw new Error(`Error sending file: ${text}`);
       }
 
       const data = await res.json();
-      setSuccess(data.message || "Archivo enviado correctamente.");
+      setSuccess(data.message || "File sent successfully.");
       setRequestId(data.request_id || "");
       setFile(null);
       setWebhookResponse("Esperando respuesta...");
