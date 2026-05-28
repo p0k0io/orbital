@@ -112,7 +112,7 @@ export default function WebhookStats({ endpointId }) {
         <div className="rounded-xl border border-white/10 bg-neutral-900 p-5">
           <div className="mb-2 flex items-center gap-2 text-xs text-white/60">
             <Activity size={14} />
-            Media de consumo
+            Average Credit Usage
           </div>
 
           <div className="text-2xl font-semibold text-white">
@@ -120,7 +120,7 @@ export default function WebhookStats({ endpointId }) {
           </div>
 
           <p className="mt-1 text-xs text-white/40">
-            Créditos consumidos por petición
+            Credits consumed per request
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export default function WebhookStats({ endpointId }) {
         <div className="rounded-xl border border-white/10 bg-neutral-900 p-5">
           <div className="mb-2 flex items-center gap-2 text-xs text-white/60">
             <Clock size={14} />
-            Tiempo medio de respuesta
+            Average Response Time
           </div>
 
           <div className="text-2xl font-semibold text-white">
@@ -136,7 +136,7 @@ export default function WebhookStats({ endpointId }) {
           </div>
 
           <p className="mt-1 text-xs text-white/40">
-            Promedio de latencia del webhook
+            Average latency of the webhook
           </p>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function WebhookStats({ endpointId }) {
       <div className="overflow-hidden rounded-xl border border-white/10 bg-neutral-900">
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
           <h3 className="text-sm font-semibold text-white">
-            Requests al Webhook
+            Requests to Webhook
           </h3>
 
           <button
@@ -186,17 +186,17 @@ export default function WebhookStats({ endpointId }) {
             className="flex items-center gap-1 text-xs text-white/60 hover:text-white"
           >
             {expanded ? <EyeOff size={14} /> : <Eye size={14} />}
-            {expanded ? "Cerrar" : "Ver todo"}
+            {expanded ? "Close" : "View all"}
           </button>
         </div>
 
         {loading ? (
-          <div className="p-5 text-sm text-white/60">Cargando…</div>
+          <div className="p-5 text-sm text-white/60">Loading…</div>
         ) : error ? (
           <div className="p-5 text-sm text-red-400">{error}</div>
         ) : logs.length === 0 ? (
           <div className="p-5 text-sm text-white/60">
-            No hay peticiones registradas
+            No registered requests
           </div>
         ) : (
           <div className="divide-y divide-white/5">
@@ -250,7 +250,7 @@ export default function WebhookStats({ endpointId }) {
               onClick={() => setPage((p) => p + 1)}
               className="flex items-center gap-1 rounded-md bg-neutral-700 px-3 py-1 text-xs text-white disabled:opacity-40"
             >
-              Siguiente
+              <span>Next</span>
               <ChevronRight size={14} />
             </button>
           </div>

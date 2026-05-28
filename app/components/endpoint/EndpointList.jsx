@@ -25,7 +25,7 @@ export default function EndpointList({
                 Endpoints
               </h2>
               <p className="text-xs text-white/50">
-                Gestiona tus endpoints
+                Manage your endpoints and view details or test them.
               </p>
             </div>
           </div>
@@ -45,7 +45,7 @@ export default function EndpointList({
               size={16}
               className="transition-transform group-hover:rotate-90"
             />
-            Nuevo
+            New
           </button>
         </div>
       </div>

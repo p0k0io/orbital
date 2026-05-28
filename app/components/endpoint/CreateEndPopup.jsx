@@ -62,15 +62,15 @@ export default function CreateApiKeyPopup({ open, onClose }) {
     setErrorMsg("");
 
     if (!keyName.trim()) {
-      return setErrorMsg("El nombre no puede estar vacío.");
+      return setErrorMsg("Name cannot be empty.");
     }
 
     if (!jsonSchema.trim()) {
-      return setErrorMsg("El JSON Schema no puede estar vacío.");
+      return setErrorMsg("The JSON Schema cannot be empty.");
     }
 
     if (!callbackURL.trim()) {
-      return setErrorMsg("La callback URL no puede estar vacía.");
+      return setErrorMsg("The callback URL cannot be empty.");
     }
 
     let parsedSchema;
@@ -79,12 +79,12 @@ export default function CreateApiKeyPopup({ open, onClose }) {
       parsedSchema = JSON.parse(jsonSchema);
     } catch {
       return setErrorMsg(
-        "El JSON Schema no es válido. Revisa la sintaxis."
+        "The JSON Schema is not valid. Please check the syntax."
       );
     }
 
     if (!user?.id) {
-      return setErrorMsg("Usuario no encontrado.");
+      return setErrorMsg("User not found.");
     }
 
     setLoading(true);
@@ -114,7 +114,7 @@ export default function CreateApiKeyPopup({ open, onClose }) {
       setCreatedUrl(data.url);
     } catch {
       setErrorMsg(
-        "Error creando el endpoint. Inténtalo de nuevo."
+        "Error creating the endpoint. Please try again."
       );
     } finally {
       setLoading(false);
@@ -139,11 +139,11 @@ export default function CreateApiKeyPopup({ open, onClose }) {
 
               <div>
                 <h2 className="text-lg font-semibold text-white">
-                  Crear endpoint
+                  Create Endpoint
                 </h2>
 
                 <p className="text-xs text-white/50">
-                  Configura un nuevo endpoint webhook
+                  Configure a new webhook endpoint
                 </p>
               </div>
             </div>
@@ -162,13 +162,13 @@ export default function CreateApiKeyPopup({ open, onClose }) {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-white/50">
                 <FolderPlus size={13} />
-                Nombre del endpoint
+                Endpoint Name
               </label>
 
               <input
                 value={keyName}
                 onChange={(e) => setKeyName(e.target.value)}
-                placeholder="mi-endpoint-produccion"
+                placeholder="my-production-endpoint"
                 className={inputClass}
               />
             </div>
@@ -191,7 +191,7 @@ export default function CreateApiKeyPopup({ open, onClose }) {
                   "
                 >
                   <Sparkles size={13} />
-                  Generar con IA
+                  Generate with AI
                 </button>
               </div>
 
@@ -242,7 +242,7 @@ export default function CreateApiKeyPopup({ open, onClose }) {
                   <Check size={16} className="text-green-400" />
 
                   <p className="text-sm font-medium text-green-400">
-                    Endpoint generado correctamente
+                    Endpoint created successfully
                   </p>
                 </div>
 
@@ -263,12 +263,12 @@ export default function CreateApiKeyPopup({ open, onClose }) {
                     {copied ? (
                       <>
                         <Check size={14} />
-                        Copiado
+                        Copied
                       </>
                     ) : (
                       <>
                         <Copy size={14} />
-                        Copiar
+                        Copy URL
                       </>
                     )}
                   </button>
@@ -287,7 +287,7 @@ export default function CreateApiKeyPopup({ open, onClose }) {
                 transition hover:bg-white/10 hover:text-white
               "
             >
-              Cancelar
+              Cancel
             </button>
 
             <div className="flex items-center gap-3">
@@ -320,12 +320,12 @@ export default function CreateApiKeyPopup({ open, onClose }) {
                       size={15}
                       className="animate-spin"
                     />
-                    Creando...
+                   Creating ...
                   </>
                 ) : (
                   <>
                     <FolderPlus size={15} />
-                    Crear endpoint
+                    Create Endpoint
                   </>
                 )}
               </button>

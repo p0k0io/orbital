@@ -51,7 +51,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
         2
       )
     );
-    console.log("Cargado selectedCard en detalles:", selectedCard);
+    
   }, [selectedCard]);
 
    const handleRegenerate = async () => {
@@ -86,7 +86,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
   };
 
   const testEndpoint = () => {
-    console.log("Probando endpoint:", selectedCard.id);
+    console.log("Testing endpoint:", selectedCard.id);
     // Aquí puedes abrir un modal o redirigir a una página de prueba
     setIsTestModalOpen(true, selectedCard.id);
 
@@ -179,7 +179,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
        <div className="flex shrink-0 items-center gap-2">
           <ActionButton
             icon={FlaskConical}
-            label="Probar"
+            label="Test"
             onClick={testEndpoint}
           />
 
@@ -193,7 +193,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
 
           <ActionButton
             icon={Trash}
-            label="Eliminar"
+            label="Delete"
             danger
             onClick={() => setConfirmOpen(true)}
           />
@@ -254,7 +254,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
         {/* JSON */}
         <section className="flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5">
           <div className="shrink-0 border-b border-white/10 px-5 py-4">
-            <p className="text-sm font-semibold text-white">JSON del endpoint</p>
+            <p className="text-sm font-semibold text-white">JSON output schema</p>
           </div>
 
           <div className="relative flex-1 overflow-hidden p-5">
@@ -297,7 +297,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
           onClick={handleClose}
           className="rounded-xl bg-gray-600 px-5 py-2.5 text-sm text-white hover:bg-gray-700 transition"
         >
-          Cerrar
+          Close
         </button>
 
         {isEditing && (
