@@ -22,7 +22,7 @@ export default function ConfirmActionModal({
           </div>
 
           <h2 className="text-lg font-semibold text-white">
-            Confirmar acción
+            Confirm action
           </h2>
         </header>
 
@@ -40,7 +40,7 @@ export default function ConfirmActionModal({
             className="flex items-center gap-2 rounded-xl bg-gray-600 px-4 py-2.5 text-sm text-white hover:bg-gray-700 transition"
           >
             <X size={16} />
-            Cancelar
+            Cancel
           </button>
 
           <button
@@ -49,7 +49,7 @@ export default function ConfirmActionModal({
             className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-60"
           >
             <Check size={16} />
-            {loading ? "Procesando..." : "Confirmar"}
+            {loading ? "Processing..." : "Confirm"}
           </button>
         </footer>
       </div>

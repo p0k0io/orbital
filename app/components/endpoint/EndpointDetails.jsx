@@ -323,7 +323,7 @@ export default function EndpointDetails({ selectedCard, handleClose, refresh }) 
       </footer>
       <ConfirmActionModal
         open={confirmOpen}
-        message="¿Seguro que quieres eliminar este endpoint? Esta acción no se puede deshacer."
+        message="¿Are you sure you want to delete this endpoint? This action cannot be undone."
         onConfirm={handleDeleteConfirm}
         onCancel={() => setConfirmOpen(false)}
         loading={deleting}

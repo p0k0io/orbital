@@ -71,7 +71,7 @@ export default function UserApiKeys() {
         setKeys((prev) => prev.filter((k) => k.id_key !== selectedKey.id_key));
         setToast({
           type: "success",
-          text: "Operación realizada correctamente",
+          text: "Operation completed successfully",
         });
       } else {
         console.error(data.error);
@@ -132,7 +132,7 @@ export default function UserApiKeys() {
           <>
             <ConfirmActionModal
               open={modalOpen}
-              message={`¿Seguro que quieres eliminar la API Key "${selectedKey?.name}"? Esta acción no se puede deshacer.`}
+              message={`¿Are you sure you want to delete the API Key "${selectedKey?.name}"? This action cannot be undone.`}
               onConfirm={handleDelete}
               onCancel={() => setModalOpen(false)}
               loading={deleting}
