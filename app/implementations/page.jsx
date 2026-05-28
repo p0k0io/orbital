@@ -302,14 +302,6 @@ function ImplementationCard({ impl, featured }) {
             {expanded ? "Show less" : "View details"}
             <ChevronRight style={{ width: 11, height: 11, transform: expanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
           </button>
-          <a href={`/docs/implementations/${impl.id}`} style={{
-            display: "flex", alignItems: "center", gap: 5, padding: "7px 13px",
-            borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer",
-            background: "transparent", border: "1px solid rgba(71,85,105,.22)",
-            color: "rgba(100,116,139,.6)", textDecoration: "none", transition: "all 0.15s",
-          }}>
-            Full guide <ExternalLink style={{ width: 10, height: 10 }} />
-          </a>
         </div>
       </div>
     </motion.div>
